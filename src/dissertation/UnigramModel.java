@@ -6,6 +6,7 @@ public class UnigramModel {
 	public UnigramModel(){};
 	TreeMap<String, Integer> unigramCounts = new TreeMap<String, Integer>();
 	int numberOfWords;
+	
 	public void countEachWord(String[] sentenceArray) {
 		
 		for (int loop=0; loop < sentenceArray.length; loop++){

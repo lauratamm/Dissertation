@@ -54,8 +54,17 @@ public class demoExercise {
 				}
 			}
 			//calculate probabilities
-			skipBigram.calculateProbability(unigram);
+			skipBigram.computeFrequencyOfFrequencyCounts(unigram);
+			skipTrigram.computeFrequencyOfFrequencyCounts(unigram);
+			skipBigram.calculateProbabilityOfUnseenWords(unigram);
+			skipTrigram.calculateProbabilityOfUnseenWords(unigram);
 			skipTrigram.calculateProbability(skipBigram.skipBigramCounts);
+			skipBigram.calculateProbability(unigram);
+			skipBigram.perplexityOf("Woman walked pub", unigram);
+			skipBigram.perplexityOf("Man walked pub", unigram);
+			skipBigram.perplexityOf("A child walked to the pub", unigram);
+			skipTrigram.perplexityOf("A woman and a child walked to the pub", unigram);
+			skipTrigram.perplexityOf("Woman walked to a pub", unigram);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

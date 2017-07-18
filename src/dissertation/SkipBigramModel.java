@@ -7,11 +7,13 @@ import java.util.TreeMap;
 
 public class SkipBigramModel {
 	public SkipBigramModel() {}
+	TidyUpData tidyUpData = new TidyUpData();
 	TreeMap <String, TreeMap <String, Double>> skipBigramCounts = new TreeMap <String, TreeMap <String, Double>> ();	
 	TreeMap <String, Double> existingEntries;
 	TreeMap <String, TreeMap <String, Double>> skipBigramProbability;
 	TreeMap <Integer, Integer> frequencyOfFrequencyCounts = new TreeMap <Integer, Integer> (); 
 	double probabilityOfUnseenWord;
+	private int numberOfCommonlyUsedWordsInEnglish = 1000;
 	
 	public void getSkipBigramCounts(String[] shortSentenceArray) {
 
@@ -107,6 +109,7 @@ public class SkipBigramModel {
 		System.out.println("About to calculate bigram probabilities");
 		//copy the bigram count
 		this.skipBigramProbability = this.skipBigramCounts;
+
 		double wordsTogetherCount;
 		int wordCountOuter;
 		int wordCountInner;
@@ -141,7 +144,7 @@ public class SkipBigramModel {
 				}
 				//if(decimal) {
 					//the code below leaves the probabilities in decimal - use only for inspecting probability file
-				//	this.skipBigramProbability.get(outerWord).put(innerWord, probability);					
+					this.skipBigramProbability.get(outerWord).put(innerWord, probability);					
 				//} else {
 					//Use log(prob)
 				//	this.skipBigramProbability.get(outerWord).put(innerWord, Math.log10(probability));	
@@ -152,61 +155,45 @@ public class SkipBigramModel {
 	//	if(this.printToFile) {
 	//		printProbability();
 	//	}
-		
+		System.err.println(skipBigramCounts + " skipgramcounts");
+		System.err.println(skipBigramProbability + " skipgramprobability");
 	}
 	
 	public double perplexityOf(String clue, UnigramModel unigram) {
-		//System.out.println("About to calculate perplexity");
-		clue = clue.toLowerCase();
+		System.out.println("About to calculate skip-bigram perplexity");
 		double theProbability = 0;
 		double thePerplexity;
-		int length;
-		boolean firstWord = true;
+		boolean firstBigram = true;
 		String [] words;
-		ArrayList <String> theWords;
-		double wordProbability;
+		double bigramProbability;
 		
-		//convert to an array of words
-		words = clue.split(" ");
+		tidyUpData.collectUnwantedWords();
+		//convert to an array of words and tidy
+		words=tidyUpData.removeStopWords(clue);	
+		words=tidyUpData.removeNonAlphaNumericChars(words);
+		System.out.println(Arrays.toString(words));
 		
-		//convert to an ArrayList
-		//theWords = new ArrayList <String>(Arrays.asList(words));
-		//theWords.add(0, "<s>");
-		//theWords.add(theWords.size(), "</s>");
-		//length = theWords.size();
 		
-		//convert back to an array
-		//words = new String[theWords.size()];
-		//words = theWords.toArray(words);
-		
-		boolean foundProbability = false;
-		String key=null;
-			
 		//iterate across the array of words
-		for(int outerLoop = 0; outerLoop < words.length; outerLoop++) {
-			for (int innerLoop=outerLoop; innerLoop < words.length; innerLoop++ ){
+		for(int outerLoop = 0; outerLoop < words.length-1; outerLoop++) {
+			for (int innerLoop=outerLoop; innerLoop < words.length-1; innerLoop++ ){
+				boolean foundProbability = false;
+				System.out.println(words[outerLoop]);
+				System.out.println(words[innerLoop+1]);
 				//if the  word is listed in the probability table
-				if(this.skipBigramProbability.containsKey(words[outerLoop])) {				
-					//word i-1 is found
-					//System.out.println("word i-1 found " +words[loop - 1]);
-					//System.out.println("word i " +words[loop]);
-					//get a treemap of word/probability for the word we are dealing with (words[loop - 1])
+				if(this.skipBigramProbability.containsKey(words[outerLoop])) {
 					existingEntries = this.skipBigramProbability.get(words[outerLoop]);
-					
-					//test
-					//System.out.println("FOR " +words[loop - 1]);
-					//for(String tempWord : existingEntry.keySet()) {
-						//System.out.println(tempWord);
-					//}
+					System.out.println(existingEntries);
 					if(existingEntries.containsKey(words[innerLoop+1])) {
 						//word i is found and so the bigram is found
 						//System.out.println("Word i found " +words[loop]);
 						//if(this.decimal) {
 							//calculate the probability in decimal
-							if(firstWord) {
+							if(firstBigram) {
 								theProbability = existingEntries.get(words[innerLoop+1]);
 								foundProbability=true;
-								firstWord=false;
+								firstBigram=false;
+								System.out.println(words[outerLoop] + " " + words[innerLoop+1] + " probability" + " " + theProbability);
 								/*if(this.perplexityLogFile) {
 									this.perplexityDetails += "Bigram found " +words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";	
 								}
@@ -224,20 +211,29 @@ public class SkipBigramModel {
 							}*/
 							} else {
 								theProbability= theProbability * existingEntries.get(words[innerLoop+1]);
+								foundProbability=true;
+								System.out.println(words[outerLoop] + " " + words[innerLoop+1] + " probability for" + " " + existingEntries.get(words[innerLoop+1]));
+								System.out.println(words[outerLoop] + " " + words[innerLoop+1] + " probability sum" + " " + theProbability);
 							}
+					}
 				}
 					
 				//if probability not found, reverse key and value
 				if (foundProbability==false && this.skipBigramProbability.containsKey(words[innerLoop+1])){
 					existingEntries = this.skipBigramProbability.get(words[innerLoop+1]);
-					
-					if(existingEntries.containsKey(outerLoop)){
-						if (firstWord){
-						theProbability=existingEntries.get(outerLoop);
+					System.out.println(words[innerLoop+1]);
+					System.out.println(existingEntries);
+					if(existingEntries.containsKey(words[outerLoop])){
+						if (firstBigram){
+						theProbability=existingEntries.get(words[outerLoop]);
+						System.out.println(words[innerLoop+1] + " " + words[outerLoop] + " probability " + " " + existingEntries.get(words[outerLoop]));
 						foundProbability=true;
-						firstWord=false;
+						firstBigram=false;
 						} else {
-							theProbability= theProbability * existingEntries.get(outerLoop);
+							theProbability= theProbability * existingEntries.get(words[outerLoop]);
+							foundProbability=true;
+							System.out.println(words[innerLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingEntries.get(words[outerLoop]));
+							System.out.println(words[innerLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
 						}
 					}
 				}
@@ -257,25 +253,28 @@ public class SkipBigramModel {
 					
 				//Bi gram not found  
 				if (foundProbability==false){
+					System.out.println("skipgram not found");
 					//backoff 
 	
 					//if(this.perplexityLogFile) {
 					//	this.perplexityDetails += " Bigram " +words[outerLoop -1] +" " +words[outerLoop] +" not found \n";
 					//}
-					wordProbability = calculateProbabilityOf(words[outerLoop], unigram);
+					bigramProbability = calculateProbabilityOf(words[outerLoop], words[innerLoop+1], unigram);
 					//if(this.decimal) {
 						//calculate the probability in decimal
-						if(firstWord) {
-							theProbability = wordProbability;
+						if(firstBigram) {
+							theProbability = bigramProbability;
+							System.out.println("probability for " + words[outerLoop] + " " + words[innerLoop+1] + theProbability);
 						/*	if(this.perplexityLogFile) {
 								this.perplexityDetails += words[outerLoop - 1] + "  "  +words[outerLoop] +" " +theProbability +"\n";
 							}*/
-							firstWord = false;
+							firstBigram = false;
 						} else {
 						/*	if(this.perplexityLogFile) {
 								this.perplexityDetails += "Multiplying " + theProbability +" * " +wordProbability + " to get ";
 							}*/
-							theProbability = theProbability * wordProbability;
+							theProbability = theProbability * bigramProbability;
+							System.out.println("probability for " + words[outerLoop] + " " + words[innerLoop+1] + theProbability);
 						/*	if(this.perplexityLogFile) {
 								this.perplexityDetails += theProbability +"\n";
 							}*/
@@ -293,33 +292,7 @@ public class SkipBigramModel {
 						}
 					}*/
 					
-				}
-				
-			} else {
-				//Bi gram not found - lets use the unigram count
-				//if(this.perplexityLogFile) {
-					this.perplexityDetails += "Bigram " +words[loop -1] +" - " +words[loop] +" not found\n ";
-				}
-				wordProbability = calculateProbabilityOf(words[loop]);
-				if(this.decimal) {
-					//calculate the probability in decimal
-					if(firstWord) {
-						theProbability = wordProbability;
-						if(this.perplexityLogFile) {
-							this.perplexityDetails += words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";
-						}
-						firstWord = false;
-					} else {
-						if(this.perplexityLogFile) {
-							this.perplexityDetails += "Multiplying " + theProbability +" * " +wordProbability + " to get ";
-						}
-						theProbability = theProbability * wordProbability;
-						if(this.perplexityLogFile) {
-							this.perplexityDetails += theProbability +"\n";
-						}
-													
-					}
-				} else {
+				/* else {
 					//calculate the probability in logarithms
 					wordProbability = Math.log10(wordProbability);
 					if(this.perplexityLogFile) {
@@ -329,60 +302,60 @@ public class SkipBigramModel {
 					if(this.perplexityLogFile) {
 						this.perplexityDetails += theProbability +"\n";
 					}
-				}
+				}*/
 			}
 		}
 		
+		
 		//calculate the perplexity
-		if(this.decimal) {
-			thePerplexity = Math.pow(theProbability, (-1.0/length));
-		} else {
+		//if(this.decimal) {
+			thePerplexity = Math.pow(theProbability, (-1.0/words.length));
+		//} else {
 			//convert back to decimal before calculating perplexity
-			thePerplexity = Math.pow(Math.pow(10, theProbability), (-1.0/length));
-		}
+			//thePerplexity = Math.pow(Math.pow(10, theProbability), (-1.0/length));
+		//}
 		
 		//If using individual calls print details in console
-		if(!this.bulkLoad) {
+		//if(!this.bulkLoad) {
 			//System.out.println(clue);
 			//System.out.println("Probability = " +theProbability);
 			//System.out.println("Perplexity = " +thePerplexity +"\n\n");	
-		} 
-		
-		
-
-		
+		//} 
+			
 		//Not happy with this here - but  will move when model is finalised
-		if(this.perplexityLogFile  && !this.bulkLoad) {
+		/*if(this.perplexityLogFile  && !this.bulkLoad) {
 			this.perplexityDetails += clue +"\n";
 			this.perplexityDetails += "Probability " +theProbability +"\n";
 			this.perplexityDetails += "Perplexity " +thePerplexity +"\n\n\n";
 			
 			printPerplexityDetails();
-		}
+		}*/
 
 		
 		System.out.println(thePerplexity +"   " +clue);
 		return thePerplexity;
 	}
-}
 
-public double calculateProbabilityOf(String word, UnigramModel unigram) {
-	double numberOfTimesSeen;
+
+public double calculateProbabilityOf(String word1, String word2, UnigramModel unigram) {
+	int numberOfTimesSeen;
 	double newCounts;
+	double probabilityWord1;
+	double probabilityWord2;
 	double probability;
 	double absoluteDiscount = 0.75;
 	
 	//if(this.perplexityLogFile) {
 	//	this.perplexityDetails += "Calculating the probability of " +word +"\n";
 	//}
-	if(!unigram.unigramCounts.containsKey(word)) {
+	if(!unigram.unigramCounts.containsKey(word1)) {
 		//if(this.perplexityLogFile) {
 		//	this.perplexityDetails += "I have never seen this word before - probability = " +this.probabilityOfUnseenWord +"\n";
 		//}
-		return this.probabilityOfUnseenWord;
+		probabilityWord1= probabilityOfUnseenWord;
 		
 	} else {
-		numberOfTimesSeen = unigram.unigramCounts.get(word);
+		numberOfTimesSeen = unigram.unigramCounts.get(word1);
 		
 		if(this.frequencyOfFrequencyCounts.containsKey(numberOfTimesSeen + 1)) {
 		/*	if(this.perplexityLogFile) {
@@ -396,25 +369,87 @@ public double calculateProbabilityOf(String word, UnigramModel unigram) {
 			/*if(this.perplexityLogFile) {
 				this.perplexityDetails += "New counts is " +newCounts +"\n";
 			}*/
-			probability = newCounts / unigram.getTotalWordCount();
+			probabilityWord1 = newCounts / unigram.getTotalWordCount();
 			/*if(this.perplexityLogFile) {
 				this.perplexityDetails += "Probability is " +probability +"\n";
 			}*/
-			return probability;
+
 		} else {
 			newCounts = numberOfTimesSeen - absoluteDiscount;
-			probability = newCounts / unigram.getTotalWordCount();
+			probabilityWord1 = newCounts / unigram.getTotalWordCount();
 			/*if(this.perplexityLogFile) {
 				this.perplexityDetails += "I don't have Nc+1 ... using absolute discounting \n";
 				this.perplexityDetails += "New counts is " +newCounts +"\n";
 				this.perplexityDetails += "Probability is " +probability +"\n";
 			}*/
-			
-			return probability;
 		}
 		
 	}
+	
+	if(!unigram.unigramCounts.containsKey(word2)) {
+		//if(this.perplexityLogFile) {
+		//	this.perplexityDetails += "I have never seen this word before - probability = " +this.probabilityOfUnseenWord +"\n";
+		//}
+		probabilityWord2= probabilityOfUnseenWord;
+		
+	} else {
+		numberOfTimesSeen = unigram.unigramCounts.get(word2);
+		
+		if(this.frequencyOfFrequencyCounts.containsKey(numberOfTimesSeen + 1)) {
+		/*	if(this.perplexityLogFile) {
+				this.perplexityDetails += "I have Nc and Nc+1 \n";
+				this.perplexityDetails += "C + 1 = " +(numberOfTimesSeen + 1) +"\n";
+				this.perplexityDetails += "N2 = " +this.frequencyOfFrequencyCounts.get(numberOfTimesSeen + 1) +"\n";
+				this.perplexityDetails += "N1 = " +this.frequencyOfFrequencyCounts.get(numberOfTimesSeen) +"\n";
+				this.perplexityDetails += "N2/N1 = " +((double) this.frequencyOfFrequencyCounts.get(numberOfTimesSeen + 1) / (double) this.frequencyOfFrequencyCounts.get(numberOfTimesSeen)) +"\n";
+			}*/
+			newCounts = ((numberOfTimesSeen + 1) * (((double) this.frequencyOfFrequencyCounts.get(numberOfTimesSeen + 1)) / (double) this.frequencyOfFrequencyCounts.get(numberOfTimesSeen)));
+			/*if(this.perplexityLogFile) {
+				this.perplexityDetails += "New counts is " +newCounts +"\n";
+			}*/
+			probabilityWord2 = newCounts / unigram.getTotalWordCount();
+			/*if(this.perplexityLogFile) {
+				this.perplexityDetails += "Probability is " +probability +"\n";
+			}*/
 
+		} else {
+			newCounts = numberOfTimesSeen - absoluteDiscount;
+			probabilityWord2 = newCounts / unigram.getTotalWordCount();
+			/*if(this.perplexityLogFile) {
+				this.perplexityDetails += "I don't have Nc+1 ... using absolute discounting \n";
+				this.perplexityDetails += "New counts is " +newCounts +"\n";
+				this.perplexityDetails += "Probability is " +probability +"\n";
+			}*/
+		}
+		
+	}
+	
+	probability=(probabilityWord1 + probabilityWord2)/2;
+	return probability;
+
+}
+
+public void computeFrequencyOfFrequencyCounts(UnigramModel unigram) {
+	
+	for(Integer aCount : unigram.unigramCounts.values()) {
+		//System.out.println("Found value " +aCount);
+		if(this.frequencyOfFrequencyCounts.keySet().contains(aCount)) {
+			//key already exists - add one to value
+			this.frequencyOfFrequencyCounts.put(aCount, (this.frequencyOfFrequencyCounts.get(aCount) + 1));
+		} else {
+			//key doesn't exist set up with a value of 1
+			//System.out.println("Setting up " +aCount);
+			this.frequencyOfFrequencyCounts.put(aCount, 1);
+		}
+	}
+	//printFrequencyOfFrequencies();
+}
+
+public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
+	this.probabilityOfUnseenWord = this.frequencyOfFrequencyCounts.get(1);
+	this.probabilityOfUnseenWord=this.probabilityOfUnseenWord/unigram.getTotalWordCount();
+	this.probabilityOfUnseenWord=this.probabilityOfUnseenWord/ this.numberOfCommonlyUsedWordsInEnglish;
+	System.out.println("Prob of unseen words is " +probabilityOfUnseenWord);
 }
 
 }
