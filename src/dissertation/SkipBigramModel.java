@@ -3,6 +3,7 @@ package dissertation;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 public class SkipBigramModel {
@@ -27,15 +28,16 @@ public class SkipBigramModel {
 				String key= null;
 				String secondWord=null;
 				
-				System.out.println("1st word: " +shortSentenceArray[outerLoop]);
-				System.out.println("2nd word: " + shortSentenceArray[innerLoop+1]);	
+				
+				//System.out.println("1st word: " +shortSentenceArray[outerLoop]);
+				//System.out.println("2nd word: " + shortSentenceArray[innerLoop+1] +"\n");	
 				
 				//if first word exists as a key
 				if (skipBigramCounts.containsKey(shortSentenceArray[outerLoop])) {
 					
 					//record the key word for future use in case an exact match is not found
-					key=recordWord(key, shortSentenceArray[outerLoop]);
-					secondWord=recordWord(secondWord, shortSentenceArray[innerLoop+1]);
+					key=shortSentenceArray[outerLoop];
+					secondWord=shortSentenceArray[innerLoop+1];
 					
 					//get the map of existing entries for the keyword
 					existingEntries = skipBigramCounts.get(shortSentenceArray[outerLoop]);
@@ -45,13 +47,13 @@ public class SkipBigramModel {
 						incrementCount(existingEntries, shortSentenceArray[outerLoop], shortSentenceArray[innerLoop+1]);		
 						skipgramFound=true;
 					}
-					
+				}	
 				//if key does not exist reverse first and second word
-				}else if(skipBigramCounts.containsKey(shortSentenceArray[innerLoop+1])) {
+				if(skipgramFound==false && skipBigramCounts.containsKey(shortSentenceArray[innerLoop+1])) {
 					
 					//record the key word for future use in case an exact match is not found
-					key=recordWord(key, shortSentenceArray[innerLoop+1]);
-					secondWord=recordWord(secondWord, shortSentenceArray[outerLoop]);
+					key=shortSentenceArray[innerLoop+1];
+					secondWord= shortSentenceArray[outerLoop];
 					
 					//get the map of existing entries for the keyword
 					existingEntries = skipBigramCounts.get(shortSentenceArray[innerLoop+1]);
@@ -65,7 +67,7 @@ public class SkipBigramModel {
 				}
 				
 				//if only a key word was found add a new value to it
-				if (skipgramFound==false && key!=null) {
+				if (skipgramFound==false && key!=null && secondWord!=null) {
 					addNewValue(existingEntries, key, secondWord);
 				}	
 				
@@ -90,26 +92,31 @@ public class SkipBigramModel {
 		TreeMap<String, Double> newEntry = new TreeMap<String, Double>();
 		newEntry.put(occursWithKey, 1.0);
 		skipBigramCounts.put(key, newEntry);
-		System.out.println(skipBigramCounts + " all skipgrams after adding new entry");
+		//System.out.println(skipBigramCounts + " all skipgrams after adding new entry");
 	}
 
 	public void addNewValue (TreeMap<String, Double> existingEntries, String key, String occursWithKey){
 		existingEntries.put(occursWithKey, 1.0);
 		skipBigramCounts.put(key, existingEntries);
-		System.out.println(skipBigramCounts + " all skipgrams after adding new value");
+		//System.out.println(skipBigramCounts + " all skipgrams after adding new value");
 	}
 	
 	public void incrementCount(TreeMap <String, Double> existingEntries, String key, String occursWithKey ){
 		existingEntries.put(occursWithKey, (existingEntries.get(occursWithKey)+1.0));
-		System.out.println(skipBigramCounts + " all skipgrams after incrementing");
-		skipBigramCounts.put(key, existingEntries);
+		//System.out.println(skipBigramCounts + " all skipgrams after incrementing");
+		//skipBigramCounts.put(key, existingEntries);
 	}
 	
 	public void calculateProbability(UnigramModel unigram) {
 		System.out.println("About to calculate bigram probabilities");
+		//System.out.println("first key: " + skipBigramCounts.get((skipBigramCounts.keySet().toArray())[0]));
+		//System.out.println("first key: " + skipBigramCounts.get((skipBigramCounts.keySet().toArray())[1]));
+		//System.out.println("first key: " + skipBigramCounts.get((skipBigramCounts.keySet().toArray())[2]));
+		System.out.println("first key:" +skipBigramCounts.firstKey());
+		System.out.println("last key: " +skipBigramCounts.lastKey());
 		//copy the bigram count
 		this.skipBigramProbability = this.skipBigramCounts;
-
+		//System.out.println("probabilities inside calc prob: " +skipBigramProbability);
 		double wordsTogetherCount;
 		int wordCountOuter;
 		int wordCountInner;
@@ -119,28 +126,28 @@ public class SkipBigramModel {
 		for(String outerWord : this.skipBigramProbability.keySet()) {
 			for(String innerWord : this.skipBigramProbability.get(outerWord).keySet()) {
 				if(display) {
-					System.out.println("Testing " +outerWord +" and " +innerWord);	
+					//System.out.println("Testing " +outerWord +" and " +innerWord);	
 				}
 				wordsTogetherCount = this.skipBigramProbability.get(outerWord).get(innerWord);
 				if(display) {
-					System.out.println("Word together count " +wordsTogetherCount);	
+					//System.out.println("Word together count " +wordsTogetherCount);	
 				}
 				wordCountOuter = unigram.unigramCounts.get(outerWord);
 				wordCountInner = unigram.unigramCounts.get(innerWord);
 				if(display) {
-					System.out.println("Word count for " + outerWord + " : " +wordCountOuter);	
-					System.out.println("Word count for " + innerWord + " : " +wordCountInner);	
+					//System.out.println("Word count for " + outerWord + " : " +wordCountOuter);	
+					//System.out.println("Word count for " + innerWord + " : " +wordCountInner);	
 				}
 			
 				
 				if(wordsTogetherCount == 0) {
-						System.out.println("Found a zero");
+					//System.out.println("Found a zero");
 				}
 				
 				probability = (double) (wordsTogetherCount/ wordCountOuter + wordsTogetherCount/wordCountInner)/2;
 
 				if(display) {
-					System.out.println(outerWord + " " +innerWord +" = " + probability);	
+					//System.out.println(outerWord + " " +innerWord +" = " + probability);	
 				}
 				//if(decimal) {
 					//the code below leaves the probabilities in decimal - use only for inspecting probability file
@@ -155,35 +162,40 @@ public class SkipBigramModel {
 	//	if(this.printToFile) {
 	//		printProbability();
 	//	}
-		System.err.println(skipBigramCounts + " skipgramcounts");
-		System.err.println(skipBigramProbability + " skipgramprobability");
+		//System.err.println(skipBigramCounts + " skipgramcounts");
+		//System.err.println(skipBigramProbability + " skipgramprobability");
+		//System.out.println("probabilities inside calc prob after: " +skipBigramProbability);
 	}
 	
 	public double perplexityOf(String clue, UnigramModel unigram) {
-		System.out.println("About to calculate skip-bigram perplexity");
+		//System.out.println("About to calculate skip-bigram perplexity");
+		//System.out.println(skipBigramCounts);
+		//System.out.println(skipBigramProbability);
 		double theProbability = 0;
 		double thePerplexity;
 		boolean firstBigram = true;
 		String [] words;
 		double bigramProbability;
-		
+		int bigramCount=0;
 		tidyUpData.collectUnwantedWords();
 		//convert to an array of words and tidy
 		words=tidyUpData.removeStopWords(clue);	
 		words=tidyUpData.removeNonAlphaNumericChars(words);
-		System.out.println(Arrays.toString(words));
+		//System.out.println(Arrays.toString(words));
 		
 		
 		//iterate across the array of words
 		for(int outerLoop = 0; outerLoop < words.length-1; outerLoop++) {
 			for (int innerLoop=outerLoop; innerLoop < words.length-1; innerLoop++ ){
+				bigramCount++;
 				boolean foundProbability = false;
-				System.out.println(words[outerLoop]);
-				System.out.println(words[innerLoop+1]);
+				//System.out.println(words[outerLoop]);
+				//System.out.println(skipBigramProbability.get(words[outerLoop]));
+				//System.out.println(words[innerLoop+1]);
 				//if the  word is listed in the probability table
 				if(this.skipBigramProbability.containsKey(words[outerLoop])) {
 					existingEntries = this.skipBigramProbability.get(words[outerLoop]);
-					System.out.println(existingEntries);
+					//System.out.println("existing entries for jeremy " + existingEntries);
 					if(existingEntries.containsKey(words[innerLoop+1])) {
 						//word i is found and so the bigram is found
 						//System.out.println("Word i found " +words[loop]);
@@ -213,7 +225,7 @@ public class SkipBigramModel {
 								theProbability= theProbability * existingEntries.get(words[innerLoop+1]);
 								foundProbability=true;
 								System.out.println(words[outerLoop] + " " + words[innerLoop+1] + " probability for" + " " + existingEntries.get(words[innerLoop+1]));
-								System.out.println(words[outerLoop] + " " + words[innerLoop+1] + " probability sum" + " " + theProbability);
+								//System.out.println(words[outerLoop] + " " + words[innerLoop+1] + " probability sum" + " " + theProbability);
 							}
 					}
 				}
@@ -221,8 +233,8 @@ public class SkipBigramModel {
 				//if probability not found, reverse key and value
 				if (foundProbability==false && this.skipBigramProbability.containsKey(words[innerLoop+1])){
 					existingEntries = this.skipBigramProbability.get(words[innerLoop+1]);
-					System.out.println(words[innerLoop+1]);
-					System.out.println(existingEntries);
+					//System.out.println(words[innerLoop+1]);
+					//System.out.println(existingEntries);
 					if(existingEntries.containsKey(words[outerLoop])){
 						if (firstBigram){
 						theProbability=existingEntries.get(words[outerLoop]);
@@ -233,7 +245,7 @@ public class SkipBigramModel {
 							theProbability= theProbability * existingEntries.get(words[outerLoop]);
 							foundProbability=true;
 							System.out.println(words[innerLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingEntries.get(words[outerLoop]));
-							System.out.println(words[innerLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
+							//System.out.println(words[innerLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
 						}
 					}
 				}
@@ -309,7 +321,7 @@ public class SkipBigramModel {
 		
 		//calculate the perplexity
 		//if(this.decimal) {
-			thePerplexity = Math.pow(theProbability, (-1.0/words.length));
+			thePerplexity = Math.pow(theProbability, (-1.0/(bigramCount+1)));
 		//} else {
 			//convert back to decimal before calculating perplexity
 			//thePerplexity = Math.pow(Math.pow(10, theProbability), (-1.0/length));
@@ -449,7 +461,23 @@ public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
 	this.probabilityOfUnseenWord = this.frequencyOfFrequencyCounts.get(1);
 	this.probabilityOfUnseenWord=this.probabilityOfUnseenWord/unigram.getTotalWordCount();
 	this.probabilityOfUnseenWord=this.probabilityOfUnseenWord/ this.numberOfCommonlyUsedWordsInEnglish;
-	System.out.println("Prob of unseen words is " +probabilityOfUnseenWord);
+	//System.out.println("Prob of unseen words is " +probabilityOfUnseenWord);
 }
 
+	public void getSkipgramCountsMethod2(String[] shortSentenceArray){
+		int length = shortSentenceArray.length;
+		int index = 0;
+		boolean skipgramFound=false;
+		if (skipBigramCounts.containsKey(shortSentenceArray[0])){
+			existingEntries=skipBigramCounts.get(shortSentenceArray[0]);
+			for(int loop=1; loop< length; loop++){
+				if (existingEntries.containsKey(shortSentenceArray[loop])){
+					incrementCount(existingEntries, shortSentenceArray[0], shortSentenceArray[loop]);		
+					skipgramFound=true;
+				}
+			}	
+		}
+		
+		
+	}
 }

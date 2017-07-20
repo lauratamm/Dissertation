@@ -17,6 +17,10 @@ public class TidyUpData {
 		this.unwantedWords.add("is");
 		this.unwantedWords.add("am");
 		this.unwantedWords.add("and");
+		this.unwantedWords.add("he");
+		this.unwantedWords.add("was");
+		this.unwantedWords.add("not");
+		this.unwantedWords.add("-");
 		}
 	
 
@@ -38,9 +42,11 @@ public class TidyUpData {
 	
 	public String[] removeNonAlphaNumericChars (String [] shortSentenceArray){
 		ArrayList<String> shortSentenceListTidiedUp= new ArrayList<String>();
-		for (int loop = 0; loop<shortSentenceArray.length; loop ++) {				
+		for (int loop = 0; loop<shortSentenceArray.length; loop ++) {	
 			String tidiedWord= shortSentenceArray[loop].replaceAll("[^A-Za-z0-9]", "");
+			if(!shortSentenceArray[loop].isEmpty()){
 			shortSentenceListTidiedUp.add(tidiedWord);
+			}
 		}
 		String [] shortSentenceArrayTidiedUp = shortSentenceListTidiedUp.toArray(new String[shortSentenceListTidiedUp.size()]);
 		return shortSentenceArrayTidiedUp;

@@ -19,7 +19,7 @@ public class UnigramModel {
 			//increase word count
 			numberOfWords++;
 		}
-		System.out.println(unigramCounts + "  unigram");
+		//System.out.println(unigramCounts + "  unigram");
 	}
 	
 	public int getTotalWordCount() {
