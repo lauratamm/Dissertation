@@ -20,6 +20,11 @@ public class TidyUpData {
 		this.unwantedWords.add("he");
 		this.unwantedWords.add("was");
 		this.unwantedWords.add("not");
+		this.unwantedWords.add("with");
+		this.unwantedWords.add("we");
+		this.unwantedWords.add("can");
+		this.unwantedWords.add("could");
+		this.unwantedWords.add("would");
 		this.unwantedWords.add("-");
 		}
 	
