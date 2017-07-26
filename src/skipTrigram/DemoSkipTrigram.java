@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -20,9 +21,7 @@ public class DemoSkipTrigram {
 		System.out.println("Building the trigram model, please be patient ...");
 		long startTime;
 		long endTime;
-		
-		
-		
+	
 		startTime = System.nanoTime();
 			
 		SkipBigramModel skipBigram = new SkipBigramModel();
@@ -31,7 +30,7 @@ public class DemoSkipTrigram {
 		UnigramModel unigram = new UnigramModel();	
 		TidyUpData tidyUpData= new TidyUpData();
 		
-		File file = new File("corbyn.txt");
+		File file = new File("largeData.txt");
 		FileInputStream fis = null;
 		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.UK);
 		BufferedReader br=null;
@@ -63,46 +62,40 @@ public class DemoSkipTrigram {
 					//remove all non-alphanumerical characters and convert to lower case
 					String[] shortSentenceArrayTidiedUp=tidyUpData.removeNonAlphaNumericChars(shortSentenceArray);	
 					
-					System.out.println(Arrays.toString(shortSentenceArrayTidiedUp));
+					//System.out.println(Arrays.toString(shortSentenceArrayTidiedUp));
 					//get unigram counts
 					unigram.countEachWord(shortSentenceArrayTidiedUp);
 					//get skip-bigram counts
 					skipBigram.getSkipBigramCounts(shortSentenceArrayTidiedUp);	
-					/*if (shortSentenceArrayTidiedUp.length>9){
-						int length1, length2;
-						if(shortSentenceArrayTidiedUp.length % 2==0){
-							length1 =shortSentenceArrayTidiedUp.length/2;
-							String[] firstHalfOfSentence = new String[length1];
-							String[] secondHalfOfSentence = new String[length1];
-							//get skip-trigram counts
-							skipTrigram.getSkipTrigramCounts(firstHalfOfSentence, skipBigram.skipBigramCounts);	
-							skipTrigram.getSkipTrigramCounts(secondHalfOfSentence, skipBigram.skipBigramCounts);
-						} else {
-							length1 =shortSentenceArrayTidiedUp.length/2;
-							length2=(shortSentenceArrayTidiedUp.length/2)+1;
-							String[] firstHalfOfSentence = new String[length1];
-							String[] secondHalfOfSentence = new String[length2];
-							//get skip-trigram counts
-							skipTrigram.getSkipTrigramCounts(firstHalfOfSentence, skipBigram.skipBigramCounts);	
-							skipTrigram.getSkipTrigramCounts(secondHalfOfSentence, skipBigram.skipBigramCounts);
-						}
-					}*/
-					skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);				
+					//skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
+					if(shortSentenceArrayTidiedUp.length<7){
+						skipTrigram.getSkipTrigramCountsMethod3(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
+					}else if (shortSentenceArrayTidiedUp.length>6 && shortSentenceArrayTidiedUp.length<13){
+						tidyUpData.splitSentenceIntoTwo(shortSentenceArrayTidiedUp, skipTrigram, skipBigram);				
+					} else if (shortSentenceArrayTidiedUp.length>12 && shortSentenceArrayTidiedUp.length<19) {
+					
+						tidyUpData.splitSentenceIntoThree(shortSentenceArrayTidiedUp, skipTrigram, skipBigram);		
+					}else {
+						
+						tidyUpData.splitSentenceIntoFour(shortSentenceArrayTidiedUp, skipTrigram, skipBigram);	
+					}	
+					//skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
+					//System.out.println("\nall skiptrigrams at the end of the method: "+skipTrigram.skipTrigrams);
 					noOfSentences++;
-					System.out.println("heree");
+					//System.out.println("heree");
 				}
 			}
 			//calculate probabilities
-			System.out.println("here");
-			System.out.println("No of keys in bigram count: "+ skipBigram.skipBigramCounts.keySet().size());
+			//System.out.println("here");
+			
 			skipBigram.computeFrequencyOfFrequencyCounts(unigram);
 			skipTrigram.computeFrequencyOfFrequencyCounts(unigram);
 			skipBigram.calculateProbabilityOfUnseenWords(unigram);
 			skipTrigram.calculateProbabilityOfUnseenWords(unigram);
-			System.out.println("counts: "+skipBigram.skipBigramCounts);
 			skipTrigram.calculateProbability(skipBigram.skipBigramCounts);
 			skipBigram.calculateProbability(unigram);
-			
+			System.out.println(skipBigram.skipBigramProbability.keySet().size());
+			System.out.println(skipTrigram.skipTrigramProbability.keySet().size());
 		
 
 			
@@ -128,7 +121,8 @@ public class DemoSkipTrigram {
 				System.out.println("heap free size: " +heapFreeSize);
 				System.out.println("No of sentences: " + noOfSentences);
 				System.out.println("No of keys in bigram count: "+ skipBigram.skipBigramCounts.keySet().size());
-				System.out.println("No of keys in tri count: "+ skipTrigram.skipTrigramCounts.keySet().size());
+				System.out.println("No of entries in tri count: "+ skipTrigram.skipTrigramCounts.keySet().size());
+				
 				System.out.println(unigram.getTotalWordCount() +" word count \n\n");
 				
 				//System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
@@ -147,15 +141,15 @@ public class DemoSkipTrigram {
 				skipBigram.perplexityOf("bananas and cream", unigram);
 				skipBigram.perplexityOf("bananas and cream bananas and cream", unigram);*/
 				
-				//System.out.println("\n\nTrigram outcomes: \n");		
+				//System.out.println("\n\nTrigram outcomes: \n");	
 				skipTrigram.perplexityOf("The man walked to the pub", unigram);
 				//skipBigram.perplexityOf("A child walked to the pub", unigram);		
-				//skipTrigram.perplexityOf("A politician walked to the office", unigram);
+				skipTrigram.perplexityOf("A politician walked to the office", unigram);
 				skipTrigram.perplexityOf("Jeremy Corbyn is the new Labour party leader", unigram);	
 				skipTrigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);	
 				skipTrigram.perplexityOf("bananas and cream bananas and cream", unigram);
 				//skipTrigram.perplexityOf("Woman walked to a pub", unigram);
-				
+				skipTrigram.findSuitableWord("W", "Start wood for money", unigram);
 				if (br !=null){
 					br.close();
 				}

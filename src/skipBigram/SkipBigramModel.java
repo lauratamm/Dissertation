@@ -3,10 +3,10 @@ package skipBigram;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.TreeMap;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.HashMap;
 
 import dissertation.Dictionary;
 import dissertation.TidyUpData;
@@ -15,15 +15,15 @@ import dissertation.UnigramModel;
 public class SkipBigramModel {
 	public SkipBigramModel() {}
 	TidyUpData tidyUpData = new TidyUpData();
-	public TreeMap <String, TreeMap <String, Double>> skipBigramCounts = new TreeMap <String, TreeMap <String, Double>> ();	
-	private TreeMap <String, TreeMap <String, Double>> skipBigramProbability;
-	private TreeMap <Integer, Integer> frequencyOfFrequencyCounts = new TreeMap <Integer, Integer> (); 
+	public HashMap <String, HashMap <String, Double>> skipBigramCounts = new HashMap <String, HashMap <String, Double>> ();	
+	public HashMap <String, HashMap <String, Double>> skipBigramProbability;
+	private HashMap <Integer, Integer> frequencyOfFrequencyCounts = new HashMap <Integer, Integer> (); 
 	private double probabilityOfUnseenWord;
 	private int numberOfCommonlyUsedWordsInEnglish = 1000;
 
 	
 	public void getSkipBigramCounts(String[] shortSentenceArray) {
-		TreeMap <String, Double> existingEntries=null;
+		HashMap <String, Double> existingEntries=null;
 		//pick the key word
 		for (int outerLoop=0; outerLoop<shortSentenceArray.length-1; outerLoop++){
 			//skip over each word in the sentence
@@ -95,19 +95,19 @@ public class SkipBigramModel {
 	}
 
 	private void addNewEntry(String key, String occursWithKey) {
-		TreeMap<String, Double> newEntry = new TreeMap<String, Double>();
+		HashMap<String, Double> newEntry = new HashMap<String, Double>();
 		newEntry.put(occursWithKey, 1.0);
 		skipBigramCounts.put(key, newEntry);
 		//System.out.println(skipBigramCounts + " all skipgrams after adding new entry");
 	}
 
-	public void addNewValue (TreeMap<String, Double> existingEntries, String key, String occursWithKey){
+	public void addNewValue (HashMap<String, Double> existingEntries, String key, String occursWithKey){
 		existingEntries.put(occursWithKey, 1.0);
 		skipBigramCounts.put(key, existingEntries);
 		//System.out.println(skipBigramCounts + " all skipgrams after adding new value");
 	}
 	
-	public void incrementCount(TreeMap <String, Double> existingEntries, String key, String occursWithKey ){
+	public void incrementCount(HashMap <String, Double> existingEntries, String key, String occursWithKey ){
 		existingEntries.put(occursWithKey, (existingEntries.get(occursWithKey)+1.0));
 		//System.out.println(skipBigramCounts + " all skipgrams after incrementing");
 		//skipBigramCounts.put(key, existingEntries);
@@ -118,8 +118,8 @@ public class SkipBigramModel {
 		//System.out.println("first key: " + skipBigramCounts.get((skipBigramCounts.keySet().toArray())[0]));
 		//System.out.println("first key: " + skipBigramCounts.get((skipBigramCounts.keySet().toArray())[1]));
 		//System.out.println("first key: " + skipBigramCounts.get((skipBigramCounts.keySet().toArray())[2]));
-		System.out.println("first key:" +skipBigramCounts.firstKey());
-		System.out.println("last key: " +skipBigramCounts.lastKey());
+		//System.out.println("first key:" +skipBigramCounts.firstKey());
+		//System.out.println("last key: " +skipBigramCounts.lastKey());
 		//copy the bigram count
 		this.skipBigramProbability = this.skipBigramCounts;
 		//System.out.println("probabilities inside calc prob: " +skipBigramProbability);
@@ -174,7 +174,7 @@ public class SkipBigramModel {
 	}
 	
 	public double perplexityOf(String clue, UnigramModel unigram) {
-		TreeMap <String, Double> existingEntries;
+		HashMap <String, Double> existingEntries;
 		//System.out.println("About to calculate skip-bigram perplexity");
 		//System.out.println(skipBigramCounts);
 		//System.out.println(skipBigramProbability);
@@ -350,9 +350,9 @@ public class SkipBigramModel {
 			printPerplexityDetails();
 		}*/
 
-		if (clue.equals("Start wood for money chopping")) {
+		//if (clue.equals("Start wood for money chopping")) {
 			System.out.println(thePerplexity +"   " +clue);
-		}
+		//}
 		return thePerplexity;
 	}
 
@@ -466,6 +466,7 @@ public void computeFrequencyOfFrequencyCounts(UnigramModel unigram) {
 }
 
 public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
+	//System.out.println(" unseen words:"+ frequencyOfFrequencyCounts);
 	this.probabilityOfUnseenWord = this.frequencyOfFrequencyCounts.get(1);
 	this.probabilityOfUnseenWord=this.probabilityOfUnseenWord/unigram.getTotalWordCount();
 	this.probabilityOfUnseenWord=this.probabilityOfUnseenWord/ this.numberOfCommonlyUsedWordsInEnglish;
@@ -473,7 +474,7 @@ public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
 }
 
 	public void getSkipgramCountsMethod2(String[] shortSentenceArray){
-		TreeMap <String, Double> existingEntries;
+		HashMap <String, Double> existingEntries;
 		int length = shortSentenceArray.length;
 		int index1 = 0;
 		int index2=1;
@@ -490,7 +491,7 @@ public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
 	
 	private boolean findBigram(String word1, String word2){
 		String key, secondWord;
-		TreeMap <String, Double> existingEntries;
+		HashMap <String, Double> existingEntries;
 		boolean skipgramFound=false;
 		if (skipBigramCounts.containsKey(word1)){
 			key=word1;
@@ -516,14 +517,11 @@ public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
 		return false;
 	}
 	
-	public void findSuitableWord (String firstLetter, String givenWords, UnigramModel unigram) {
-		
-		
-		
+	public void findSuitableWord (String firstLetter, String givenWords, UnigramModel unigram) {		
 		Double perplexityOfClue=100000.00;
 		Double lastPerplexity;
-		TreeMap<Double, String> mostProbableClues = new TreeMap<Double, String>();
-		TreeMap<String, Double> wordsFoundBySkipgram = new TreeMap<String,Double>();
+		HashMap<Double, String> mostProbableClues = new HashMap<Double, String>();
+		HashMap<String, Double> wordsFoundBySkipgram = new HashMap<String,Double>();
 		Dictionary dictionary = new Dictionary();
 		boolean firstWord = true;
 		int number=0;

@@ -22,8 +22,8 @@ public class UnigramModel {
 			}
 			
 			char[] letters = sentenceArray[loop].toCharArray();
-			if (letters[0]==('g') && !allGWords.contains(sentenceArray[loop])){
-				allGWords.add(sentenceArray[loop]);
+			if (letters[0]==('c') && !allCWords.contains(sentenceArray[loop])){
+				allCWords.add(sentenceArray[loop]);
 			}
 			//increase word count
 			numberOfWords++;

@@ -1,4 +1,4 @@
-package dissertation;
+/*package dissertation;
 import java.awt.peer.SystemTrayPeer;
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,7 +27,7 @@ public class demoExercise {
 		UnigramModel unigram = new UnigramModel();	
 		TidyUpData tidyUpData= new TidyUpData();
 		
-		File file = new File("corbyn.txt");
+		File file = new File("largeData.txt");
 		FileInputStream fis = null;
 		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.UK);
 		BufferedReader br=null;
@@ -48,7 +48,7 @@ public class demoExercise {
 					String theSentence= line.substring(start,end);
 					//remove multiple spaces
 					//System.out.println("before removing non alpha num: " + theSentence);
-					theSentence= theSentence.replaceAll("[^A-Za-z0-9\\s+]", "");
+					theSentence= theSentence.replaceAll("[^A-Za-z0-9\\s]", "");
 					theSentence= theSentence.replaceAll("–", "");
 					//System.out.println("after removing non alpha num: " + theSentence);
 					theSentence = theSentence.replaceAll("\\s+", " ");
@@ -90,13 +90,24 @@ public class demoExercise {
 				endTime = System.nanoTime();
 				double duration = (endTime - startTime) / 1000000000.0;
 				System.out.println("I have built the model in " +duration +" seconds \n");
+				// Get current size of heap in bytes
+				long heapSize = Runtime.getRuntime().totalMemory();
+				System.out.println("heapsize: " + heapSize);
+				// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
+				// Any attempt will result in an OutOfMemoryException.
+				long heapMaxSize = Runtime.getRuntime().maxMemory();
+System.out.println("heap maz size: " + heapMaxSize);
+				// Get amount of free memory within the heap in bytes. This size will increase
+				// after garbage collection and decrease as new objects are created.
+				long heapFreeSize = Runtime.getRuntime().freeMemory();
+				System.out.println("heap free size: " +heapFreeSize);
 				System.out.println("No of sentences: " + noOfSentences);
 				System.out.println("No of keys in bigram count: "+ skipBigram.skipBigramCounts.keySet().size());
 				System.out.println("No of keys in tri count: "+ skipTrigram.skipTrigramCounts.keySet().size());
 				System.out.println(unigram.getTotalWordCount() +" word count \n\n");
 				
-				System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
-				System.out.println("last key: " +skipBigram.skipBigramCounts.lastKey());
+				//System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
+				//System.out.println("last key: " +skipBigram.skipBigramCounts.lastKey());
 				//System.out.println("counts: "+skipBigram.skipBigramCounts);
 				//System.out.println("probabilities: "+skipBigram.skipBigramProbability);
 				System.out.println("Bigram outcomes: \n");
@@ -112,11 +123,11 @@ public class demoExercise {
 				skipBigram.perplexityOf("bananas and cream bananas and cream", unigram);
 				
 				//System.out.println("\n\nTrigram outcomes: \n");		
-				skipTrigram.perplexityOf("The man walked to the pub", unigram);
+				//skipTrigram.perplexityOf("The man walked to the pub", unigram);
 				//skipBigram.perplexityOf("A child walked to the pub", unigram);		
 				//skipTrigram.perplexityOf("A politician walked to the office", unigram);
 				skipTrigram.perplexityOf("Jeremy Corbyn is the new Labour party leader", unigram);	
-				skipTrigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);	
+				//skipTrigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);	
 				//skipTrigram.perplexityOf("bananas and cream", unigram);
 				//skipTrigram.perplexityOf("Woman walked to a pub", unigram);
 				
@@ -128,4 +139,4 @@ public class demoExercise {
 			}
 		}
 	}
-}
+}*/

@@ -121,10 +121,11 @@ System.out.println("heap maz size: " + heapMaxSize);
 				skipBigram.perplexityOf("Jeremy Corbyn is the new Labour party leader", unigram);
 				skipBigram.perplexityOf("bananas and cream", unigram);
 				skipBigram.perplexityOf("bananas and cream bananas and cream", unigram);
+				skipBigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);
 				System.out.println("\n\n --------------\n\n");
 				
 				//skipBigram.findSuitableWord("W", "Start wood for money", unigram);
-				skipBigram.findSuitableWord("W", "Row about head of cat", unigram);
+				//skipBigram.findSuitableWord("W", "Row about head of cat", unigram);
 				//System.out.println("\n\nTrigram outcomes: \n");		
 				//skipTrigram.perplexityOf("The man walked to the pub", unigram);
 				//skipBigram.perplexityOf("A child walked to the pub", unigram);		
