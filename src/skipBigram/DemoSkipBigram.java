@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.BreakIterator;
+import java.util.Arrays;
 import java.util.Locale;
 
 import dissertation.TidyUpData;
@@ -14,7 +15,7 @@ import dissertation.UnigramModel;
 public class DemoSkipBigram {
 
 	public static void main(String[] args) {
-		System.out.println("Building the bigram model, please be patient ...");
+		System.out.println("Building the bigram model, please be patient ...\n");
 		long startTime;
 		long endTime;
 		
@@ -27,12 +28,11 @@ public class DemoSkipBigram {
 		UnigramModel unigram = new UnigramModel();	
 		TidyUpData tidyUpData= new TidyUpData();
 		
-		File file = new File("largeData.txt");
+		File file = new File("mediumData.txt");
 		FileInputStream fis = null;
 		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.UK);
 		BufferedReader br=null;
 		
-		tidyUpData.collectUnwantedWords();
 		int noOfSentences=0;	
 		try {
 			String line= ""; 
@@ -53,17 +53,18 @@ public class DemoSkipBigram {
 					//System.out.println("after removing non alpha num: " + theSentence);
 					theSentence = theSentence.replaceAll("\\s+", " ");
 					//System.out.println("after removing spaces: " + theSentence);
-					//System.out.println("Dealing with: " +theSentence);
+					//System.out.println("\nDealing with: " +theSentence);
 					//break sentence into an array of words
 					String[] shortSentenceArray=tidyUpData.removeStopWords(theSentence);	
 					//remove all non-alphanumerical characters and convert to lower case
 					String[] shortSentenceArrayTidiedUp=tidyUpData.removeNonAlphaNumericChars(shortSentenceArray);	
 					
-					//System.out.println(Arrays.toString(shortSentenceArrayTidiedUp));
+					//System.out.println("After tidying up the sentence: "+Arrays.toString(shortSentenceArrayTidiedUp));
 					//get unigram counts
 					unigram.countEachWord(shortSentenceArrayTidiedUp);
 					//get skip-bigram counts
 					skipBigram.getSkipBigramCounts(shortSentenceArrayTidiedUp);	
+					//System.out.println("All skip-bigrams: "+skipBigram.skipBigramCounts);
 					//get skip-trigram counts
 					//skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);	
 					noOfSentences++;
@@ -89,22 +90,24 @@ public class DemoSkipBigram {
 					fis.close();
 				endTime = System.nanoTime();
 				double duration = (endTime - startTime) / 1000000000.0;
-				System.out.println("I have built the model in " +duration +" seconds \n");
+				System.out.println("\n\nI have built the model in " +duration +" seconds");
 				// Get current size of heap in bytes
 				long heapSize = Runtime.getRuntime().totalMemory();
-				System.out.println("heapsize: " + heapSize);
+				//System.out.println("heapsize: " + heapSize);
 				// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
 				// Any attempt will result in an OutOfMemoryException.
 				long heapMaxSize = Runtime.getRuntime().maxMemory();
-System.out.println("heap maz size: " + heapMaxSize);
+				//System.out.println("heap maz size: " + heapMaxSize);
 				// Get amount of free memory within the heap in bytes. This size will increase
 				// after garbage collection and decrease as new objects are created.
 				long heapFreeSize = Runtime.getRuntime().freeMemory();
-				System.out.println("heap free size: " +heapFreeSize);
+				//System.out.println("heap free size: " +heapFreeSize);
 				System.out.println("No of sentences: " + noOfSentences);
-				System.out.println("No of keys in bigram count: "+ skipBigram.skipBigramCounts.keySet().size());
+				System.out.println("Word count: "+ unigram.getTotalWordCount());
+				//System.out.println("\nAll skip-bigrams: \n" + skipBigram.skipBigramCounts);
+				//System.out.println("No of keys in bigram count: "+ skipBigram.skipBigramCounts.keySet().size());
 				//System.out.println("No of keys in tri count: "+ skipTrigram.skipTrigramCounts.keySet().size());
-				System.out.println(unigram.getTotalWordCount() +" word count \n\n");
+				
 				
 				//System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
 				//System.out.println("last key: " +skipBigram.skipBigramCounts.lastKey());

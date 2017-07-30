@@ -1,13 +1,14 @@
 package skipTrigram;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 import dissertation.Dictionary;
 import dissertation.TidyUpData;
@@ -24,45 +25,46 @@ public class SkipTrigramModel {
 	HashMap <Integer, Integer> frequencyOfFrequencyCounts = new HashMap <Integer, Integer> ();
 	double probabilityOfUnseenWord;
 	double numberOfCommonlyUsedWordsInEnglish  =1000;
-	
+	String[] wordsToAddNewTrigram= new String[3];
 	ArrayList <String> skipTrigrams = new ArrayList<String>();
 
 	public void getSkipTrigramCounts(String[] shortSentenceArray, HashMap <String, HashMap <String, Double>> skipBigramCounts) {
 		//System.out.println("Calculating trigram counts");
 		HashMap <String, HashMap <String, Double>> existingSecondWordEntries;
 		
-
+		int skips=0;
 		
 		for (int outerLoop=0; outerLoop<shortSentenceArray.length-2; outerLoop++){
 			for (int secondLoop=outerLoop; secondLoop<shortSentenceArray.length-2; secondLoop++){	
 				for (int thirdLoop=secondLoop; thirdLoop<shortSentenceArray.length-2; thirdLoop++){
 					//flag for finding an existing trigram
+					skips++;
 					boolean skipgramFound=false;
 					final String outerloopFinal = new String(shortSentenceArray[outerLoop]);
 					String key= null;
 					String secondWord=null;
 					String thirdWord=null;
 
-					/*System.out.println("1st word: " + shortSentenceArray[outerLoop]);
-					System.out.println("2nd word: " + shortSentenceArray[secondLoop+1]);
-					System.out.println("3rd word: " + shortSentenceArray[thirdLoop+2]);*/
+					//System.out.println("1st word: " + shortSentenceArray[outerLoop]);
+					//System.out.println("2nd word: " + shortSentenceArray[secondLoop+1]);
+					//System.out.println("3rd word: " + shortSentenceArray[thirdLoop+2]);
 
 					//check if the first word exists as a key in the skipTrigramCounts map
 					if (skipgramFound==false && skipTrigramCounts.containsKey(shortSentenceArray[outerLoop])) {
+	
 						//record the key word for future use in case an exact match is not found
 						key=recordKey(key, secondWord, shortSentenceArray[outerLoop]);
-						//System.out.println("First word exists " + shortSentenceArray[outerLoop]);
 						//get the map of existing entries for the keyword
 						existingSecondWordEntries = skipTrigramCounts.get(shortSentenceArray[outerLoop]);
 						/*existingSecondWordEntries = skipTrigramCounts.entrySet().stream()
 								.filter(map -> outerloopFinal.equals(map.getKey()))
-								.map(map -> map.getValue()).findFirst().get();*/
-						//System.out.println("stream: "+existingSecondWordEntries);
+								.map(map -> map.getValue()).findFirst().get();
+						//System.out.println("stream: "+existingSecondWordEntries);*/
 						//check if the second word exists as a key in the existingSecondWordEntries map
 						if(existingSecondWordEntries.containsKey(shortSentenceArray[secondLoop+1])){
 							//System.out.println("First word exists and second word exists " + shortSentenceArray[outerLoop] + " " + shortSentenceArray[secondLoop+1]);
 							//check if the third word exists
-							if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2], existingSecondWordEntries)){
+							if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2])){
 								skipgramFound=true;
 							}
 							else{
@@ -76,7 +78,7 @@ public class SkipTrigramModel {
 						}else {					
 							if(existingSecondWordEntries.containsKey(shortSentenceArray[thirdLoop+2])){
 								//System.out.println("First word exists and second word exists " + shortSentenceArray[outerLoop] + " " + shortSentenceArray[thirdLoop+2]);
-								if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[thirdLoop+2], shortSentenceArray[secondLoop+1], existingSecondWordEntries)){
+								if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[thirdLoop+2], shortSentenceArray[secondLoop+1])){
 									skipgramFound=true;
 								}
 								else{
@@ -103,7 +105,7 @@ public class SkipTrigramModel {
 							//System.out.println("Second word exists as key and 1st word exists " + shortSentenceArray[secondLoop+1] + " " + shortSentenceArray[outerLoop]);
 							//check if the whole trigram exists				
 							if (checkIfThirdWordExists(shortSentenceArray[secondLoop+1], shortSentenceArray[outerLoop], 
-								shortSentenceArray[thirdLoop+2], existingSecondWordEntries)){
+								shortSentenceArray[thirdLoop+2])){
 								skipgramFound=true;
 							}
 							else{
@@ -121,7 +123,7 @@ public class SkipTrigramModel {
 								//System.out.println("Second word exists as key and 1st word exists " + shortSentenceArray[secondLoop+1] + " " + shortSentenceArray[thirdLoop+2]);
 								//check if the whole trigram exists				
 								if (checkIfThirdWordExists(shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2], 
-									shortSentenceArray[outerLoop], existingSecondWordEntries)){
+									shortSentenceArray[outerLoop])){
 									skipgramFound=true;
 								}
 								else{
@@ -149,7 +151,7 @@ public class SkipTrigramModel {
 						if(existingSecondWordEntries.containsKey(shortSentenceArray[outerLoop])){
 							//check if the whole trigram exists				
 							if (checkIfThirdWordExists(shortSentenceArray[thirdLoop+2], shortSentenceArray[outerLoop], 
-								shortSentenceArray[secondLoop+1], existingSecondWordEntries)){
+								shortSentenceArray[secondLoop+1])){
 								skipgramFound=true;
 							}
 							else{
@@ -165,7 +167,7 @@ public class SkipTrigramModel {
 							if(existingSecondWordEntries.containsKey(shortSentenceArray[secondLoop+1])){
 								//check if the whole trigram exists				
 								if (checkIfThirdWordExists(shortSentenceArray[thirdLoop+2], shortSentenceArray[secondLoop+1], 
-									shortSentenceArray[outerLoop], existingSecondWordEntries)){
+									shortSentenceArray[outerLoop])){
 									skipgramFound=true;
 								}
 								else{
@@ -181,11 +183,11 @@ public class SkipTrigramModel {
 					
 					//if skipgram does not exist, but first and second word have been mapped, add the third word into the map
 					if (skipgramFound==false && secondWord!=null && key !=null && thirdWord!=null){
-						/*System.out.println(key);
-						System.out.println(secondWord);
-						System.out.println(thirdWord);*/
+						/*//System.out.println(key);
+						//System.out.println(secondWord);
+						//System.out.println(thirdWord);*/
 						existingSecondWordEntries = skipTrigramCounts.get(key);
-						addNewThirdWord(existingSecondWordEntries, key, secondWord, thirdWord);
+						addNewThirdWord(key, secondWord, thirdWord);
 					}
 					
 					//if only the key exists, add second and third words into the map
@@ -205,7 +207,7 @@ public class SkipTrigramModel {
 						}
 						
 						existingSecondWordEntries = skipTrigramCounts.get(shortSentenceArray[outerLoop]);
-						addNewSecondValue(key, secondWord, thirdWord);		
+						addNewSecondAndThirdWord(key, secondWord, thirdWord);		
 					}
 					
 					//if none of the words exist in the map, record a new entry
@@ -215,14 +217,125 @@ public class SkipTrigramModel {
 				}
 			}
 		}
+		//System.out.println(skips);
 	}
 
+	private boolean checkIfKeyExists(String key){
+		if (skipTrigramCounts.containsKey(key)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
+	private boolean checkIfTrigramExistsForKeyWord(String key, String secondWord, String thirdWord){
+		if(checkIfKeyExists(key)){
+			if (checkIfSecondWordExists(key, secondWord)){
+				if(checkIfThirdWordExists(key, secondWord, thirdWord)){
+					return true;
+				} else{
+					//record the words for future use in case an exact match is not found
+					recordValues(key, secondWord, thirdWord);
+				}
+			}	
+				
+			//swap second and third words
+			if(checkIfSecondWordExists(key, thirdWord)){
+				if(checkIfThirdWordExists(key, thirdWord, secondWord)){
+					return true;
+				}else{
+					//record the words for future use in case an exact match is not found
+					recordValues(key, thirdWord, secondWord);
+				}
+			}	
+		}
+		return false;
+	}
+	
+	private boolean checkIfSecondWordExists(String key, String secondWord){	
+		HashMap <String, HashMap <String, Double>> existingSecondWordEntries=skipTrigramCounts.get(key);
+		if (existingSecondWordEntries.containsKey(secondWord)){
+			return true;
+		} else{
+		return false;
+		}
+	}
+	
+	private boolean checkIfTwoOfTheWordsHaveBeenMapped(){
+		if (wordsToAddNewTrigram[0]!=null && wordsToAddNewTrigram[1] !=null){	
+			//System.out.println(wordsToAddNewTrigram[0] + wordsToAddNewTrigram[1]+ " exist");
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	private String[] checkIfOneOfTheWordsHasBeenMapped(String key, String secondWord, String thirdWord){
+		
+		if (checkIfKeyExists(key)){
+			String[] orderOfWordsToBeAdded= {key, secondWord, thirdWord};
+			return orderOfWordsToBeAdded;
+		} else if (checkIfKeyExists(secondWord)){
+			String[] orderOfWordsToBeAdded= {secondWord, key, thirdWord};
+			return orderOfWordsToBeAdded;
+		} else if (checkIfKeyExists(thirdWord)){
+			String[] orderOfWordsToBeAdded= {thirdWord, secondWord, key};
+			return orderOfWordsToBeAdded;
+		}
+		else return null;
+	}
+	
+	public void getSkipTrigramCountsTest(String[] shortSentenceArray, HashMap <String, HashMap <String, Double>> skipBigramCounts) {
+		//retrieve three words
+		for (int outerLoop=0; outerLoop<shortSentenceArray.length-2; outerLoop++){
+			for (int secondLoop=outerLoop; secondLoop<shortSentenceArray.length-2; secondLoop++){	
+				for (int thirdLoop=secondLoop; thirdLoop<shortSentenceArray.length-2; thirdLoop++){
+					//empty the array of words to be added
+					wordsToAddNewTrigram[0]=null;
+					wordsToAddNewTrigram[1]=null;
+					wordsToAddNewTrigram[2]=null;
+					
+					//flag for finding an existing trigram				
+					boolean skipgramFound=false;
+					
+					if(checkIfTrigramExistsForKeyWord(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2])){
+						skipgramFound=true;
+					}
+					
+					if(checkIfTrigramExistsForKeyWord(shortSentenceArray[secondLoop+1], shortSentenceArray[outerLoop], shortSentenceArray[thirdLoop+2])){
+						skipgramFound=true;
+					}
+						
+					if(checkIfTrigramExistsForKeyWord(shortSentenceArray[thirdLoop+2], shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1])){
+						skipgramFound=true;
+					}
+										
+					if (skipgramFound==false){
+						//if skipgram does not exist, but two of the words have been mapped, add the third word into the map
+						if (checkIfTwoOfTheWordsHaveBeenMapped()){
+							addNewThirdWord(wordsToAddNewTrigram[0], wordsToAddNewTrigram[1], wordsToAddNewTrigram[2]);
+						}
+						//if one of the words exists as key, add the two words as its branches
+						else if (checkIfOneOfTheWordsHasBeenMapped(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2])!=null){						
+							String[] orderOfWordsToBeAdded=checkIfOneOfTheWordsHasBeenMapped(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2]);
+							addNewSecondAndThirdWord(orderOfWordsToBeAdded[0], orderOfWordsToBeAdded[1], orderOfWordsToBeAdded[2]);
+						}
+						else {
+						//if none of the words exist as key
+							addNewEntry(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+1], shortSentenceArray[thirdLoop+2]);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public void getSkipTrigramCountsMethod2 (String[] shortSentenceArray, HashMap <String, HashMap <String, Double>> skipBigramCounts) {
 		
 		skipTrigramCounts.entrySet().stream();
 		
-		System.out.println("calculating trigram counts");
+		//System.out.println("calculating trigram counts");
 		int countAhead = 2;
 		int currentPos = 0;
 		HashMap<String, ArrayList<String>> tempMap = new HashMap<String, ArrayList<String>>();
@@ -262,7 +375,7 @@ public class SkipTrigramModel {
 			//System.out.println(" adding first trigram "+ tempMap.firstKey());
 			//addTrigram(tempMap.firstKey());
 			//tempMap.keySet().remove(tempMap.firstKey());
-			System.out.println(skipTrigrams);
+			//System.out.println(skipTrigrams);
 		} 
 		
 		if (!skipTrigrams.isEmpty()){		
@@ -296,9 +409,9 @@ public class SkipTrigramModel {
 		Pattern regex = Pattern.compile(value+" \\[(\\w).*\\]");
 		Matcher m = regex.matcher(trigram);
 		if (m.find()) {
-			/*System.out.println("\nvalue :"+ value);
-			System.out.println("trigram: "+ trigram);
-			System.out.println(m.group() + "found");*/
+			/*//System.out.println("\nvalue :"+ value);
+			//System.out.println("trigram: "+ trigram);
+			//System.out.println(m.group() + "found");*/
 			String trigramWithCount = skipTrigrams.get(skipTrigrams.indexOf(trigram));
 			//System.out.println(trigramWithCount+ " trigram we want");
 			Pattern numberRegex = Pattern.compile("\\[(.*?)\\]");
@@ -340,7 +453,7 @@ public class SkipTrigramModel {
 					if(existingSecondWordEntries.containsKey(shortSentenceArray[outerLoop+1])){
 						//System.out.println("First word exists and second word exists " + shortSentenceArray[outerLoop] + " " + shortSentenceArray[outerLoop+1]);
 						//check if the third word exists
-						if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[outerLoop+1], shortSentenceArray[secondLoop+2], existingSecondWordEntries)){
+						if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[outerLoop+1], shortSentenceArray[secondLoop+2])){
 							skipgramFound=true;
 						}
 						else{
@@ -354,7 +467,7 @@ public class SkipTrigramModel {
 					}else {					
 						if(existingSecondWordEntries.containsKey(shortSentenceArray[secondLoop+2])){
 							//System.out.println("First word exists and second word exists " + shortSentenceArray[outerLoop] + " " + shortSentenceArray[secondLoop+2]);
-							if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+2], shortSentenceArray[outerLoop+1], existingSecondWordEntries)){
+							if(checkIfThirdWordExists(shortSentenceArray[outerLoop], shortSentenceArray[secondLoop+2], shortSentenceArray[outerLoop+1])){
 								skipgramFound=true;
 							}
 							else{
@@ -380,7 +493,7 @@ public class SkipTrigramModel {
 						//System.out.println("Second word exists as key and 1st word exists " + shortSentenceArray[outerLoop+1] + " " + shortSentenceArray[outerLoop]);
 						//check if the whole trigram exists				
 						if (checkIfThirdWordExists(shortSentenceArray[outerLoop+1], shortSentenceArray[outerLoop], 
-							shortSentenceArray[secondLoop+2], existingSecondWordEntries)){
+							shortSentenceArray[secondLoop+2])){
 							skipgramFound=true;
 						}
 						else{
@@ -398,7 +511,7 @@ public class SkipTrigramModel {
 							//System.out.println("Second word exists as key and 1st word exists " + shortSentenceArray[outerLoop+1] + " " + shortSentenceArray[secondLoop+2]);
 							//check if the whole trigram exists				
 							if (checkIfThirdWordExists(shortSentenceArray[outerLoop+1], shortSentenceArray[secondLoop+2], 
-								shortSentenceArray[outerLoop], existingSecondWordEntries)){
+								shortSentenceArray[outerLoop])){
 								skipgramFound=true;
 							}
 							else{
@@ -426,7 +539,7 @@ public class SkipTrigramModel {
 					if(existingSecondWordEntries.containsKey(shortSentenceArray[outerLoop])){
 						//check if the whole trigram exists				
 						if (checkIfThirdWordExists(shortSentenceArray[secondLoop+2], shortSentenceArray[outerLoop], 
-							shortSentenceArray[outerLoop+1], existingSecondWordEntries)){
+							shortSentenceArray[outerLoop+1])){
 							skipgramFound=true;
 						}
 						else{
@@ -442,7 +555,7 @@ public class SkipTrigramModel {
 						if(existingSecondWordEntries.containsKey(shortSentenceArray[outerLoop+1])){
 							//check if the whole trigram exists				
 							if (checkIfThirdWordExists(shortSentenceArray[secondLoop+2], shortSentenceArray[outerLoop+1], 
-								shortSentenceArray[outerLoop], existingSecondWordEntries)){
+								shortSentenceArray[outerLoop])){
 								skipgramFound=true;
 							}
 							else{
@@ -458,11 +571,11 @@ public class SkipTrigramModel {
 				
 				//if skipgram does not exist, but first and second word have been mapped, add the third word into the map
 				if (skipgramFound==false && secondWord!=null && key !=null && thirdWord!=null){
-					/*System.out.println(key);
-					System.out.println(secondWord);
-					System.out.println(thirdWord);*/
+					/*//System.out.println(key);
+					//System.out.println(secondWord);
+					//System.out.println(thirdWord);*/
 					existingSecondWordEntries = skipTrigramCounts.get(key);
-					addNewThirdWord(existingSecondWordEntries, key, secondWord, thirdWord);
+					addNewThirdWord(key, secondWord, thirdWord);
 				}
 				
 				//if only the key exists, add second and third words into the map
@@ -482,7 +595,7 @@ public class SkipTrigramModel {
 					}
 					
 					existingSecondWordEntries = skipTrigramCounts.get(shortSentenceArray[outerLoop]);
-					addNewSecondValue(key, secondWord, thirdWord);		
+					addNewSecondAndThirdWord(key, secondWord, thirdWord);		
 				}
 				
 				//if none of the words exist in the map, record a new entry
@@ -508,9 +621,9 @@ public class SkipTrigramModel {
 					String secondWord=null;
 					String thirdWord=null;
 
-					/*System.out.println("1st word: " + shortSentenceArray[outerLoop]);
-					System.out.println("2nd word: " + shortSentenceArray[secondLoop+1]);
-					System.out.println("3rd word: " + shortSentenceArray[thirdLoop+2]);*/
+					/*//System.out.println("1st word: " + shortSentenceArray[outerLoop]);
+					//System.out.println("2nd word: " + shortSentenceArray[secondLoop+1]);
+					//System.out.println("3rd word: " + shortSentenceArray[thirdLoop+2]);*/
 					
 					HashMap <String, Double>tempMap1= new HashMap<String, Double>();
 					HashMap <String, HashMap<String, Double>> tempMap2= new HashMap<>();
@@ -522,27 +635,33 @@ public class SkipTrigramModel {
 					tempMap2.put("name", tempMap1);
 					skipTrigramCounts.put("my", tempMap2);
 					//System.out.println(skipTrigramCounts);
-					System.out.println("stream: "+skipTrigramCounts.entrySet().stream()
+					/*//System.out.println("stream: "+skipTrigramCounts.entrySet().stream()
 							.filter(map -> "my".equals(map.getKey()))
 							.map(map -> map.getValue()).findFirst().get());
 					existingSecondWordEntries = skipTrigramCounts.entrySet().stream()
 							.filter(map -> "my".equals(map.getKey()))
-							.map(map -> map.getValue()).findFirst().get();
-					System.out.println(existingSecondWordEntries);
+							.map(map -> map.getValue()).findFirst().get();*/
+
 					
 				}
 			}
 		}
 	}
 
-	private String recordKey(String key, String word2, String newValue) {
+	private String recordKey(String key, String secondWord, String newValue) {
 		//do not record a new key if two of the three words have already been found to exist
-		if(word2==null){
-			key=newValue;	
+		if(secondWord==null){
+			key = newValue;
 		}
 		return key;
 	}
-
+	private void recordValues(String key, String secondWord, String thirdWord){
+		if (wordsToAddNewTrigram[0]==null && wordsToAddNewTrigram[1]==null && wordsToAddNewTrigram[2]==null ){
+			wordsToAddNewTrigram[0]=key;
+			wordsToAddNewTrigram[1]=secondWord;
+			wordsToAddNewTrigram[2]=thirdWord;
+		}
+	}
 	private void addNewEntry(String key, String secondWord, String thirdWord){
 		HashMap <String, HashMap <String, Double>> newSecondWordEntry= new HashMap<String, HashMap<String,Double>>();
 		HashMap <String, Double> newThirdWordEntry= new HashMap<String, Double>();
@@ -552,46 +671,45 @@ public class SkipTrigramModel {
 		if(skipTrigramCounts.size() % 100 == 0) {
 			//System.out.println(skipTrigramCounts.size() +" trigrams so far");
 		}
-		//System.out.println(skipTrigramCounts + " all skip-trigrams after adding new entry");
+		//System.out.println("New key '"+key+"' added with second word '" +secondWord+"' and third word '"+ thirdWord+"' \n");
 	}
 
-	private void addNewSecondValue(String key, String secondWord, String thirdWord) {
-		HashMap <String, HashMap <String, Double>> existingSecondWordEntries;
-		/*System.out.println(key);
-		System.out.println(secondWord);
-		System.out.println(thirdWord);*/
-
-		existingSecondWordEntries = skipTrigramCounts.get(key);
+	private void addNewSecondAndThirdWord(String key, String secondWord, String thirdWord) {
+		HashMap <String, HashMap <String, Double>> existingSecondWordEntries=skipTrigramCounts.get(key);
+		//System.out.println(existingSecondWordEntries);
 		HashMap <String, Double> newThirdWordEntry= new HashMap<String, Double>();
 		newThirdWordEntry.put(thirdWord, 1.0);
 		existingSecondWordEntries.put(secondWord, newThirdWordEntry);
 		skipTrigramCounts.put(key, existingSecondWordEntries);
-		//System.out.println(skipTrigramCounts + " all skip-trigrams after adding new second word");
+		//System.out.println("New second level word '" +secondWord+"' with third word '"+thirdWord+ "' added for key '"+ key+"'\n");
 	}
 
-	public void addNewThirdWord (HashMap <String, HashMap <String, Double>> existingSecondWordEntries, String key, String secondWord, String thirdWord){
-		HashMap <String, Double> newThirdWordEntry= existingSecondWordEntries.get(secondWord);
-		newThirdWordEntry.put(thirdWord, 1.0);
-		existingSecondWordEntries.put(secondWord, newThirdWordEntry);
+	public void addNewThirdWord (String key, String secondWord, String thirdWord){
+		//System.out.println(key+ secondWord+thirdWord);
+		HashMap <String, HashMap <String, Double>> existingSecondWordEntries = skipTrigramCounts.get(key);
+		HashMap <String, Double> existingThirdWordEntries= existingSecondWordEntries.get(secondWord);
+		existingThirdWordEntries.put(thirdWord, 1.0);
+		existingSecondWordEntries.put(secondWord, existingThirdWordEntries);
 		skipTrigramCounts.put(key, existingSecondWordEntries);
-		//System.out.println(skipTrigramCounts + " all skip trigrams after adding new third word");
+		//System.out.println("New third word '" +thirdWord+"' added for key '"+ key+"' and second level word '" + secondWord+ "'\n");
 	}
 
-	public void incrementCount(HashMap <String, HashMap <String, Double>> existingSecondWordEntries, HashMap <String, Double> existingThirdWordEntries, String key, String secondWord, String thirdWord ){
+	public void incrementCount( String key, String secondWord, String thirdWord ){
+		HashMap <String, HashMap <String, Double>> existingSecondWordEntries=skipTrigramCounts.get(key);
+		HashMap <String, Double> existingThirdWordEntries=existingSecondWordEntries.get(secondWord);
 		existingThirdWordEntries.put(thirdWord, (existingThirdWordEntries.get(thirdWord)+1.0));
 		existingSecondWordEntries.put(secondWord, existingThirdWordEntries);		
 		skipTrigramCounts.put(key, existingSecondWordEntries);
-		//System.out.println(skipTrigramCounts + " all skip trigrams after incrementing");
+		//System.out.println("Incremented count for: "+key +" "+ secondWord+ " "+ thirdWord+"\n");
 	}
 
-	private boolean checkIfThirdWordExists(String keyWord, String secondWord, String thirdWord,HashMap <String, HashMap <String, Double>> existingSecondWordEntries){
-		HashMap <String, Double> existingThirdWordEntries;
-		//get the map of existing counts 
-		existingThirdWordEntries=existingSecondWordEntries.get(secondWord);
+	private boolean checkIfThirdWordExists(String keyWord, String secondWord, String thirdWord){
+		HashMap <String, HashMap <String, Double>> existingSecondWordEntries=skipTrigramCounts.get(keyWord);
+		HashMap <String, Double> existingThirdWordEntries=existingSecondWordEntries.get(secondWord);
 		//check if third word exists as a key in the map
 		if(existingThirdWordEntries.containsKey(thirdWord)){
 			//if the skiptrigram exists, increment count
-			incrementCount(existingSecondWordEntries, existingThirdWordEntries, keyWord, secondWord, thirdWord);	
+			incrementCount(keyWord, secondWord, thirdWord);	
 			return true;
 		}
 		else
@@ -621,7 +739,7 @@ public class SkipTrigramModel {
 			for(String word2 : this.skipTrigramProbability.get(word1).keySet()) {
 				for(String word3 : this.skipTrigramProbability.get(word1).get(word2).keySet()) {
 					if(word1.equals("party") && word2.equals("leader") && word3.equals("labour")) {
-						System.out.println("Testing " +word1 +" and " +word2 +" and " +word3);	
+						//System.out.println("Testing " +word1 +" and " +word2 +" and " +word3);	
 					}
 					trigramCount = (double)this.skipTrigramProbability.get(word1).get(word2).get(word3);
 					//if(word1.equals("party") && word2.equals("leader") && word3.equals("labour")) {
@@ -652,12 +770,12 @@ public class SkipTrigramModel {
 					}
 
 					if (word1.equals("party") && word2.equals("leader") && word3.equals("labour")){
-						System.out.println("bigram count for " + word1 + " " +word2 + " : " + bigramCountForWordsOneAndTwo);
-						System.out.println("bigram count for " + word1 + " " +word3 + " : " + bigramCountForWordsOneAndThree);
-						System.out.println("bigram count for " + word2 + " " +word3 + " : " + bigramCountForWordsTwoAndThree);
+						//System.out.println("bigram count for " + word1 + " " +word2 + " : " + bigramCountForWordsOneAndTwo);
+						//System.out.println("bigram count for " + word1 + " " +word3 + " : " + bigramCountForWordsOneAndThree);
+						//System.out.println("bigram count for " + word2 + " " +word3 + " : " + bigramCountForWordsTwoAndThree);
 					}
 					if(trigramCount == 0) {
-							System.out.println("Found a zero");
+							//System.out.println("Found a zero");
 					}
 					
 					probability = (double)((trigramCount / bigramCountForWordsOneAndTwo) + (trigramCount/bigramCountForWordsOneAndThree) + (trigramCount/bigramCountForWordsTwoAndThree))/3.0;
@@ -694,7 +812,7 @@ public class SkipTrigramModel {
 		double trigramProbability;
 		int trigramCount=0;
 		
-		tidyUpData.collectUnwantedWords();
+
 		//convert to an array of words and tidy
 		words=tidyUpData.removeStopWords(clue);	
 		words=tidyUpData.removeNonAlphaNumericChars(words);
@@ -707,9 +825,9 @@ public class SkipTrigramModel {
 					
 					trigramCount++;
 					boolean foundProbability = false;
-					/*System.out.println(words[outerLoop]);
-					System.out.println(words[secondLoop+1]);
-					System.out.println(words[thirdLoop+2]);*/
+					/*//System.out.println(words[outerLoop]);
+					//System.out.println(words[secondLoop+1]);
+					//System.out.println(words[thirdLoop+2]);*/
 					//System.out.println(skipTrigramProbability);
 					//make first word key in probability map
 					if(this.skipTrigramProbability.containsKey(words[outerLoop])) {
@@ -718,8 +836,6 @@ public class SkipTrigramModel {
 						//System.out.println(existingSecondWordEntries);
 						if(existingSecondWordEntries.containsKey(words[secondLoop+1])) {
 							//word i is found and so the bigram is found
-							//System.out.println("Word i found " +words[loop]);
-							//System.out.println(existingSecondWordEntries.get(key));
 							existingThirdWordEntries=existingSecondWordEntries.get(words[secondLoop+1]);
 							if (existingThirdWordEntries.containsKey(words[thirdLoop+2])){
 							//if(this.decimal) {
@@ -756,7 +872,6 @@ public class SkipTrigramModel {
 						else {
 							if(existingSecondWordEntries.containsKey(words[thirdLoop+2])) {
 								//word i is found and so the bigram is found
-								//System.out.println("Word i found " +words[loop]);
 								existingThirdWordEntries=existingSecondWordEntries.get(words[thirdLoop+2]);
 								if (existingThirdWordEntries.containsKey(words[secondLoop+1])){
 								//if(this.decimal) {
@@ -964,9 +1079,9 @@ public class SkipTrigramModel {
 			}*/
 	
 			//System.out.println("Total probability of sentence: " + theProbability);
-			if (clue.equals("Start chopping wood for money")){
+			//if (clue.equals("Start chopping wood for money")){
 			System.out.println(thePerplexity +"   " +clue);
-			}
+			//}
 			return thePerplexity;
 	}
 			
@@ -1142,8 +1257,8 @@ public class SkipTrigramModel {
 	public void findSuitableWord (String firstLetter, String givenWords, UnigramModel unigram) {		
 		Double perplexityOfClue=10000.00;
 		Double lastPerplexity;
-		TreeMap<Double, String> mostProbableClues = new TreeMap<Double, String>();
-		TreeMap<String, Double> wordsFoundBySkipgram = new TreeMap<String,Double>();
+		HashMap<Double, String> mostProbableClues = new HashMap<Double, String>();
+		HashMap<String, Double> wordsFoundBySkipgram = new HashMap<String,Double>();
 		Dictionary dictionary = new Dictionary();
 		boolean firstWord = true;
 		int number=0;
@@ -1157,13 +1272,13 @@ public class SkipTrigramModel {
 		}
 		
 		int count=0;
-		System.out.println(number);
-		System.out.println(unigram.allCWords.size() + " all c words");
-		System.out.println(mostProbableClues.keySet().size());
+		//System.out.println(number);
+		//System.out.println(unigram.allCWords.size() + " all c words");
+		//System.out.println(mostProbableClues.keySet().size());
 		for (Double perplexity: mostProbableClues.keySet()){	
 			if (count<=200){
 				wordsFoundBySkipgram.put(mostProbableClues.get(perplexity), perplexity);
-				System.out.println(mostProbableClues.get(perplexity) + ": " + perplexity);
+				//System.out.println(mostProbableClues.get(perplexity) + ": " + perplexity);
 				count++;
 			}
 			else break;

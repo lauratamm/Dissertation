@@ -1,14 +1,19 @@
 package dissertation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.TreeMap;
 
-public class UnigramModel {
+public class UnigramModel  {
 	public UnigramModel(){};
 	public TreeMap<String, Integer> unigramCounts = new TreeMap<String, Integer>();
 	int numberOfWords;
 	public ArrayList <String> allCWords = new ArrayList<String>();
 	public ArrayList <String> allGWords = new ArrayList<String>();
+	
+	
+
+	
 	
 	public void countEachWord(String[] sentenceArray) {
 		
@@ -21,7 +26,9 @@ public class UnigramModel {
 			
 			}
 			
+			
 			char[] letters = sentenceArray[loop].toCharArray();
+				
 			if (letters[0]==('c') && !allCWords.contains(sentenceArray[loop])){
 				allCWords.add(sentenceArray[loop]);
 			}
@@ -35,4 +42,6 @@ public class UnigramModel {
 	public int getTotalWordCount() {
 		return this.numberOfWords;
 	}
+
+	
 }

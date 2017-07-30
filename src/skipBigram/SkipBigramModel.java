@@ -36,7 +36,7 @@ public class SkipBigramModel {
 				
 				
 				//System.out.println("1st word: " +shortSentenceArray[outerLoop]);
-				//System.out.println("2nd word: " + shortSentenceArray[innerLoop+1] +"\n");	
+				//System.out.println("2nd word: " + shortSentenceArray[innerLoop+1]);	
 				
 				//if first word exists as a key
 				if (skipBigramCounts.containsKey(shortSentenceArray[outerLoop])) {
@@ -98,19 +98,19 @@ public class SkipBigramModel {
 		HashMap<String, Double> newEntry = new HashMap<String, Double>();
 		newEntry.put(occursWithKey, 1.0);
 		skipBigramCounts.put(key, newEntry);
-		//System.out.println(skipBigramCounts + " all skipgrams after adding new entry");
+		//System.out.println("New key '"+key+"' added with value '" +occursWithKey+"' \n");
 	}
 
 	public void addNewValue (HashMap<String, Double> existingEntries, String key, String occursWithKey){
 		existingEntries.put(occursWithKey, 1.0);
 		skipBigramCounts.put(key, existingEntries);
-		//System.out.println(skipBigramCounts + " all skipgrams after adding new value");
+		//System.out.println("New value '" +occursWithKey+"' added for key '"+ key+"'\n");
 	}
 	
 	public void incrementCount(HashMap <String, Double> existingEntries, String key, String occursWithKey ){
 		existingEntries.put(occursWithKey, (existingEntries.get(occursWithKey)+1.0));
-		//System.out.println(skipBigramCounts + " all skipgrams after incrementing");
-		//skipBigramCounts.put(key, existingEntries);
+		//System.out.println("Incremented count for: "+key +" "+ occursWithKey+"\n");
+		skipBigramCounts.put(key, existingEntries);
 	}
 	
 	public void calculateProbability(UnigramModel unigram) {
@@ -176,7 +176,7 @@ public class SkipBigramModel {
 	public double perplexityOf(String clue, UnigramModel unigram) {
 		HashMap <String, Double> existingEntries;
 		//System.out.println("About to calculate skip-bigram perplexity");
-		//System.out.println(skipBigramCounts);
+		//System.out.println("first key:" +skipBigramProbability.firstKey());
 		//System.out.println(skipBigramProbability);
 		double theProbability = 0;
 		double thePerplexity;
@@ -184,7 +184,6 @@ public class SkipBigramModel {
 		String [] words;
 		double bigramProbability;
 		int bigramCount=0;
-		tidyUpData.collectUnwantedWords();
 		//convert to an array of words and tidy
 		words=tidyUpData.removeStopWords(clue);	
 		words=tidyUpData.removeNonAlphaNumericChars(words);

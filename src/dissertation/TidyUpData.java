@@ -1,21 +1,23 @@
 package dissertation;
 
+import java.awt.peer.SystemTrayPeer;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Locale;
 
 import skipBigram.SkipBigramModel;
 import skipTrigram.SkipTrigramModel;
 
 public class TidyUpData {
-
-	public TidyUpData(){}
-	
 	ArrayList <String> unwantedWords = new ArrayList();
-	
-	public void	collectUnwantedWords() {	
-		this.unwantedWords.add("a");
+	public TidyUpData(){
+		
+		String [] unwantedWordsArray = {"the","i","you","and","a","to","it","of","that","in","yeah","was","he","on","no","oh","is","have","well","its","for","what","she","one","but","they","do","not","we","there","be","so","with","had","dont","at","this","thats","all","as","mm","like","her","go","if","just","up","get","then","are","can","his","yes","right","me","think","them","out","er","or","two","were","your","now","about","when","erm","see","im","did","been","by","from","my","him","would","want","mean","going","cos","here","some","come","an","put","how","could","ive","really","ill","very","three","look","hes","didnt","back","will","which","only","youre","say","theres","more","cant","off","who","where","gonna","five","four","why","over","bit","something","any","because","theyre","alright","other","has","youve","way","much","their","shes","into","went","these","ah","isnt","whats","done","doing","might","thing","than","last","before","first","too","havent","six","should","quite","sort","hundred","never","need","still","does","though","those","round","after","us","long","new","lot","doesnt","must","another","weve","away","twenty","even","half","make", "give","wouldnt","seven","okay","probably","eight","n","through", "always","things","ten","our","actually"};
+		
+		unwantedWords.addAll(Arrays.asList(unwantedWordsArray));
+		/*this.unwantedWords.add("a");
 		this.unwantedWords.add("the");
 		this.unwantedWords.add("to");
 		this.unwantedWords.add("is");
@@ -30,9 +32,9 @@ public class TidyUpData {
 		this.unwantedWords.add("could");
 		this.unwantedWords.add("would");
 		this.unwantedWords.add("-");
-		}
-	
-
+		this.unwantedWords.add("—");
+		this.unwantedWords.add(":");*/
+	}
 	
 	public String[] removeStopWords(String theSentence){		
 		ArrayList <String> shortSentenceList = new ArrayList<String>();
@@ -54,54 +56,41 @@ public class TidyUpData {
 		for (int loop = 0; loop<shortSentenceArray.length; loop ++) {	
 			String tidiedWord= shortSentenceArray[loop].replaceAll("[^A-Za-z0-9]", "");
 			if(!shortSentenceArray[loop].isEmpty()){
-			shortSentenceListTidiedUp.add(tidiedWord);
+			shortSentenceListTidiedUp.add(tidiedWord.toLowerCase());
 			}
 		}
 		String [] shortSentenceArrayTidiedUp = shortSentenceListTidiedUp.toArray(new String[shortSentenceListTidiedUp.size()]);
 		return shortSentenceArrayTidiedUp;
 	}
 
-	public void splitSentenceIntoTwo(String[] shortSentenceArrayTidiedUp, SkipTrigramModel skipTrigram, SkipBigramModel skipBigram){
-		int length;
+	/*public void splitSentenceIntoTwo(String[] shortSentenceArrayTidiedUp, SkipTrigramModel skipTrigram, SkipBigramModel skipBigram){
+		int length1, length2;
+		ArrayList<String>wordList = addAllWordsToList(shortSentenceArrayTidiedUp);
 		if(shortSentenceArrayTidiedUp.length % 2==0){
 			////System.out.println("even");
-			length =shortSentenceArrayTidiedUp.length/2;
-			String[] firstHalfOfSentence = new String[length];
-			
-			for (int firstLoop=0; firstLoop<length; firstLoop++){
-				firstHalfOfSentence[firstLoop]=shortSentenceArrayTidiedUp[firstLoop];
-			}
-			int deduct=0;
-			String[] secondHalfOfSentence = new String[length];
-			for (int secondLoop=length-1; secondLoop>-1; secondLoop--){	
-				secondHalfOfSentence[secondLoop]=shortSentenceArrayTidiedUp[shortSentenceArrayTidiedUp.length-1-deduct];
-				deduct++;
-			}
+			length1 =shortSentenceArrayTidiedUp.length/2;		
+			String[] firstHalfOfSentence =createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstHalfOfSentence);  
+			String[] secondHalfOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+	
 			////System.out.println(Arrays.toString(firstHalfOfSentence));
 			////System.out.println(Arrays.toString(secondHalfOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstHalfOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondHalfOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstHalfOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondHalfOfSentence, skipBigram.skipBigramCounts);
 		} else {
 			////System.out.println("odd");
-			int length1, length2;
 			length1 =shortSentenceArrayTidiedUp.length/2;
 			length2=(shortSentenceArrayTidiedUp.length/2)+1;
-			String[] firstHalfOfSentence = new String[length1];
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstHalfOfSentence[firstLoop]=shortSentenceArrayTidiedUp[firstLoop];
-			}
-			int deduct=0;
-			String[] secondHalfOfSentence = new String[length2];
-			for (int secondLoop=length2-1; secondLoop>-1; secondLoop--){	
-				secondHalfOfSentence[secondLoop]=shortSentenceArrayTidiedUp[shortSentenceArrayTidiedUp.length-1-deduct];
-				deduct++;
-			}
+			String[] firstHalfOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstHalfOfSentence);
+			String[] secondHalfOfSentence =  createArray(shortSentenceArrayTidiedUp, length2, wordList);
+
 			////System.out.println(Arrays.toString(firstHalfOfSentence));
 			////System.out.println(Arrays.toString(secondHalfOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstHalfOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondHalfOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstHalfOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondHalfOfSentence, skipBigram.skipBigramCounts);
 		}
 	}
 	
@@ -110,89 +99,53 @@ public class TidyUpData {
 		String[] firstThirdOfSentence;
 		String[] secondThirdOfSentence;
 		String[] lastThirdOfSentence;
-		ArrayList<String>wordList = new ArrayList<>();
-		for (int loop=0; loop<shortSentenceArrayTidiedUp.length; loop++){
-			wordList.add(shortSentenceArrayTidiedUp[loop]);
-		}
+		ArrayList<String>wordList = addAllWordsToList(shortSentenceArrayTidiedUp);
 		if(shortSentenceArrayTidiedUp.length % 3==0){						
 			length1 =shortSentenceArrayTidiedUp.length/3;	
-			firstThirdOfSentence = new String[length1];
-			secondThirdOfSentence = new String[length1];
-			lastThirdOfSentence = new String[length1];
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				secondThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				lastThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
+			firstThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstThirdOfSentence);
+			secondThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, secondThirdOfSentence);
+			lastThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+
 			////System.out.println(Arrays.toString(firstHalfOfSentence));
 			////System.out.println(Arrays.toString(secondHalfOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstThirdOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondThirdOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(lastThirdOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstThirdOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondThirdOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(lastThirdOfSentence, skipBigram.skipBigramCounts);
 		} else if (shortSentenceArrayTidiedUp.length % 3==1) {
 			////System.out.println("odd");
 			length1 = shortSentenceArrayTidiedUp.length/3;
 			length2 = shortSentenceArrayTidiedUp.length/3+1;
-			firstThirdOfSentence = new String[length1];
-			secondThirdOfSentence = new String[length1];
-			lastThirdOfSentence = new String[length2];
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				secondThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length2; firstLoop++){
-				lastThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
+			firstThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstThirdOfSentence);
+			secondThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, secondThirdOfSentence);
+			lastThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length2, wordList);
+	
 			////System.out.println(Arrays.toString(firstHalfOfSentence));
 			////System.out.println(Arrays.toString(secondHalfOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstThirdOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondThirdOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(lastThirdOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstThirdOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondThirdOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(lastThirdOfSentence, skipBigram.skipBigramCounts);
 		
 	}else if(shortSentenceArrayTidiedUp.length % 3==2) {
 			////System.out.println("odd");
 			length1 = shortSentenceArrayTidiedUp.length/3;
 			length2 = shortSentenceArrayTidiedUp.length/3+2;
-			firstThirdOfSentence = new String[length1];
-			secondThirdOfSentence = new String[length1];
-			lastThirdOfSentence = new String[length2];
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				secondThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length2; firstLoop++){
-				lastThirdOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
+			firstThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstThirdOfSentence);
+			secondThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, secondThirdOfSentence);
+			lastThirdOfSentence = createArray(shortSentenceArrayTidiedUp, length2, wordList);
 			////System.out.println(Arrays.toString(firstHalfOfSentence));
 			////System.out.println(Arrays.toString(secondHalfOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstThirdOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondThirdOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(lastThirdOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstThirdOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondThirdOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(lastThirdOfSentence, skipBigram.skipBigramCounts);
 		}
 	}
 	
@@ -203,149 +156,132 @@ public class TidyUpData {
 		String[] thirdQOfSentence;
 		String[] fourthQOfSentence;
 		ArrayList<String>wordList = new ArrayList<>();
-		for (int loop=0; loop<shortSentenceArrayTidiedUp.length; loop++){
-			wordList.add(shortSentenceArrayTidiedUp[loop]);
-			//System.out.println(shortSentenceArrayTidiedUp[loop]);
-		}
-		
+		addAllWordsToList(shortSentenceArrayTidiedUp);
 		if(shortSentenceArrayTidiedUp.length % 4==0){						
 			length1 =shortSentenceArrayTidiedUp.length/4;	
-			firstQOfSentence = new String[length1];
-			secondQOfSentence = new String[length1];
-			thirdQOfSentence = new String[length1];
-			fourthQOfSentence = new String[length1];
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
+			firstQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstQOfSentence);
+			secondQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, secondQOfSentence);
+			thirdQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, thirdQOfSentence);
+			fourthQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
 			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				secondQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				thirdQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				fourthQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
 			//System.out.println(Arrays.toString(firstQOfSentence));
 			//System.out.println(Arrays.toString(fourthQOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstQOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondQOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(thirdQOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(fourthQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstQOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(thirdQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(fourthQOfSentence, skipBigram.skipBigramCounts);
 			
 		} else if (shortSentenceArrayTidiedUp.length % 4==1) {
 			length1 =shortSentenceArrayTidiedUp.length/4;	
 			length2 = shortSentenceArrayTidiedUp.length/4+1;
-			firstQOfSentence = new String[length1];
-			secondQOfSentence = new String[length1];
-			thirdQOfSentence = new String[length1];
-			fourthQOfSentence = new String[length2];
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				secondQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				thirdQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length2; firstLoop++){
-				fourthQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
+			firstQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstQOfSentence);
+			secondQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, secondQOfSentence);
+			thirdQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, thirdQOfSentence);
+			fourthQOfSentence = createArray(shortSentenceArrayTidiedUp, length2, wordList);
 			//System.out.println(Arrays.toString(firstQOfSentence));
 			//System.out.println(Arrays.toString(fourthQOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstQOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondQOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(thirdQOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(fourthQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstQOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(thirdQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(fourthQOfSentence, skipBigram.skipBigramCounts);
 			
 	}else if(shortSentenceArrayTidiedUp.length % 4==2) {
 		
 		length1 =shortSentenceArrayTidiedUp.length/4;	
 		length2 = shortSentenceArrayTidiedUp.length/4+2;
-		firstQOfSentence = new String[length1];
-		secondQOfSentence = new String[length1];
-		thirdQOfSentence = new String[length1];
-		fourthQOfSentence = new String[length2];
-		
-		for (int firstLoop=0; firstLoop<length1; firstLoop++){
-			//System.out.println("loop 1 pos 0: "+wordList.get(0));
-			firstQOfSentence[firstLoop]=wordList.get(0);
-			wordList.remove(0);				
-		}
-		
-		for (int firstLoop=0; firstLoop<length1; firstLoop++){
-			//System.out.println("\nloop 2pos 0: "+wordList.get(0));
-			secondQOfSentence[firstLoop]=wordList.get(0);
-			wordList.remove(0);			
-		}
-		for (int firstLoop=0; firstLoop<length1; firstLoop++){
-			//System.out.println("loop 3 pos 0: "+wordList.get(0));
-			thirdQOfSentence[firstLoop]=wordList.get(0);
-			wordList.remove(0);				
-		}
-		for (int firstLoop=0; firstLoop<length2; firstLoop++){
-			fourthQOfSentence[firstLoop]=wordList.get(0);
-			wordList.remove(0);
-			//System.out.println("\nloop 4 pos 0: "+ fourthQOfSentence[firstLoop]);			
-		}
-		
+		firstQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+		removeAddedWordsFromList(wordList, firstQOfSentence);
+		secondQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+		removeAddedWordsFromList(wordList, secondQOfSentence);
+		thirdQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+		removeAddedWordsFromList(wordList, thirdQOfSentence);
+		fourthQOfSentence = createArray(shortSentenceArrayTidiedUp, length2, wordList);
 		//System.out.println("here");
 		//System.out.println(Arrays.toString(firstQOfSentence));
 		//System.out.println(Arrays.toString(fourthQOfSentence));
 		//System.out.println("here");
 		//get skip-trigram counts
-		skipTrigram.getSkipTrigramCountsMethod3(firstQOfSentence, skipBigram.skipBigramCounts);	
-		skipTrigram.getSkipTrigramCountsMethod3(secondQOfSentence, skipBigram.skipBigramCounts);
-		skipTrigram.getSkipTrigramCountsMethod3(thirdQOfSentence, skipBigram.skipBigramCounts);
-		skipTrigram.getSkipTrigramCountsMethod3(fourthQOfSentence, skipBigram.skipBigramCounts);
+		skipTrigram.getSkipTrigramCountsTest(firstQOfSentence, skipBigram.skipBigramCounts);	
+		skipTrigram.getSkipTrigramCountsTest(secondQOfSentence, skipBigram.skipBigramCounts);
+		skipTrigram.getSkipTrigramCountsTest(thirdQOfSentence, skipBigram.skipBigramCounts);
+		skipTrigram.getSkipTrigramCountsTest(fourthQOfSentence, skipBigram.skipBigramCounts);
 		
 		} else if(shortSentenceArrayTidiedUp.length % 4==3) {
 			
 			length1 =shortSentenceArrayTidiedUp.length/4;	
 			length2 = shortSentenceArrayTidiedUp.length/4+3;
-			firstQOfSentence = new String[length1];
-			secondQOfSentence = new String[length1];
-			thirdQOfSentence = new String[length1];
-			fourthQOfSentence = new String[length2];
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				firstQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				secondQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length1; firstLoop++){
-				thirdQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
-			for (int firstLoop=0; firstLoop<length2; firstLoop++){
-				fourthQOfSentence[firstLoop]=wordList.get(0);
-				wordList.remove(0);				
-			}
+			firstQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, firstQOfSentence);
+			secondQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, secondQOfSentence);
+			thirdQOfSentence = createArray(shortSentenceArrayTidiedUp, length1, wordList);
+			removeAddedWordsFromList(wordList, thirdQOfSentence);
+			fourthQOfSentence = createArray(shortSentenceArrayTidiedUp, length2, wordList);
 			//System.out.println(Arrays.toString(firstQOfSentence));
 			//System.out.println(Arrays.toString(fourthQOfSentence));
 			//get skip-trigram counts
-			skipTrigram.getSkipTrigramCountsMethod3(firstQOfSentence, skipBigram.skipBigramCounts);	
-			skipTrigram.getSkipTrigramCountsMethod3(secondQOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(thirdQOfSentence, skipBigram.skipBigramCounts);
-			skipTrigram.getSkipTrigramCountsMethod3(fourthQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(firstQOfSentence, skipBigram.skipBigramCounts);	
+			skipTrigram.getSkipTrigramCountsTest(secondQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(thirdQOfSentence, skipBigram.skipBigramCounts);
+			skipTrigram.getSkipTrigramCountsTest(fourthQOfSentence, skipBigram.skipBigramCounts);
 			
 			}
+	}
+	*/
+	
+	public void splitSentenceIntoSections(String[] shortSentenceArrayTidiedUp, int numberOfArrays, SkipTrigramModel skipTrigram, SkipBigramModel skipBigram){
+
+		LinkedList <String> wordList = addAllWordsToList(shortSentenceArrayTidiedUp);
+		int remainder=getModulo(shortSentenceArrayTidiedUp, numberOfArrays);
+		int length=shortSentenceArrayTidiedUp.length/numberOfArrays;
+		String[] splitArray;
+		for(int loop = 0 ; loop<numberOfArrays; loop++){		 
+			//determine the size of the last array if not same length
+			if (loop==(numberOfArrays-1)){
+				splitArray = createArray(shortSentenceArrayTidiedUp, (length+remainder), wordList);
+				skipTrigram.getSkipTrigramCountsTest(splitArray, skipBigram.skipBigramCounts);
+			} else {
+				splitArray= createArray(shortSentenceArrayTidiedUp, length, wordList);
+				wordList=removeAddedWordsFromList(wordList, splitArray);
+				skipTrigram.getSkipTrigramCountsTest(splitArray, skipBigram.skipBigramCounts);
+			}
+			
+		}
+	}
+	
+	
+	private String[] createArray(String[] shortSentenceArrayTidiedUp, int length, LinkedList<String> wordList){
+		String[] splitArray = new String[length];
+		for (int loop=0; loop<length; loop++){
+			splitArray[loop]=wordList.get(loop);
+		}
+		return splitArray;
+	}
+	
+	private LinkedList<String> addAllWordsToList (String[] shortSentenceArrayTidiedUp){
+		LinkedList<String> wordList = new LinkedList<>();
+		for (int loop=0; loop<shortSentenceArrayTidiedUp.length; loop++){
+			wordList.addLast(shortSentenceArrayTidiedUp[loop]);
+		}
+		return wordList;
+	}
+	
+	private LinkedList<String> removeAddedWordsFromList (LinkedList<String> wordList,String[] arrayOfWords){
+		for (int loop=0; loop<arrayOfWords.length; loop++){
+			wordList.removeFirst();
+		}	
+		return wordList;
+	}
+	
+	private int getModulo(String[] shortSentenceArrayTidiedUp, int numberOfSections){
+		return shortSentenceArrayTidiedUp.length % numberOfSections;
 	}
 }

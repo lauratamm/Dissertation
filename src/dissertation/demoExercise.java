@@ -1,4 +1,4 @@
-/*package dissertation;
+package dissertation;
 import java.awt.peer.SystemTrayPeer;
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,10 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.TreeMap;
 
-import dissertation.SkipBigramModel;
+
 
 public class demoExercise {
 
@@ -22,8 +25,8 @@ public class demoExercise {
 		
 	
 		
-		SkipBigramModel skipBigram = new SkipBigramModel();
-		SkipTrigramModel skipTrigram = new SkipTrigramModel();
+		//SkipBigramModel skipBigram = new SkipBigramModel();
+		//SkipTrigramModel skipTrigram = new SkipTrigramModel();
 		UnigramModel unigram = new UnigramModel();	
 		TidyUpData tidyUpData= new TidyUpData();
 		
@@ -32,7 +35,7 @@ public class demoExercise {
 		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.UK);
 		BufferedReader br=null;
 		
-		tidyUpData.collectUnwantedWords();
+		//tidyUpData.collectUnwantedWords();
 		int noOfSentences=0;	
 		try {
 			String line= ""; 
@@ -55,31 +58,50 @@ public class demoExercise {
 					//System.out.println("after removing spaces: " + theSentence);
 					//System.out.println("Dealing with: " +theSentence);
 					//break sentence into an array of words
-					String[] shortSentenceArray=tidyUpData.removeStopWords(theSentence);	
+					//String[] shortSentenceArray=tidyUpData.removeStopWords(theSentence);	
 					//remove all non-alphanumerical characters and convert to lower case
+					String[] shortSentenceArray=theSentence.split(" ");
 					String[] shortSentenceArrayTidiedUp=tidyUpData.removeNonAlphaNumericChars(shortSentenceArray);	
 					
 					//System.out.println(Arrays.toString(shortSentenceArrayTidiedUp));
 					//get unigram counts
+					//System.out.println(shortSentenceArrayTidiedUp.length);
 					unigram.countEachWord(shortSentenceArrayTidiedUp);
+					
 					//get skip-bigram counts
-					skipBigram.getSkipBigramCounts(shortSentenceArrayTidiedUp);	
+					//skipBigram.getSkipBigramCounts(shortSentenceArrayTidiedUp);	
 					//get skip-trigram counts
-					skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);	
+					//skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);	
 					noOfSentences++;
 				}
 			}
-			//calculate probabilities
+			/*//calculate probabilities
 			skipBigram.computeFrequencyOfFrequencyCounts(unigram);
 			skipTrigram.computeFrequencyOfFrequencyCounts(unigram);
 			skipBigram.calculateProbabilityOfUnseenWords(unigram);
 			skipTrigram.calculateProbabilityOfUnseenWords(unigram);
 			//System.out.println("counts: "+skipBigram.skipBigramCounts);
 			skipTrigram.calculateProbability(skipBigram.skipBigramCounts);
-			skipBigram.calculateProbability(unigram);
+			skipBigram.calculateProbability(unigram);*/
 			
+			TreeMap <Integer, String> popularWords = new TreeMap<Integer, String>(Collections.reverseOrder());
+			
+			for (String key: unigram.unigramCounts.keySet()){
+				popularWords.put(unigram.unigramCounts.get(key),key);	
+			}
+			int count = 1;
+			String output="";
+			for (int key: popularWords.keySet()){
+				if(count<201){
+					output=output+"\""+popularWords.get(key) + "\",";
+					if (count % 50==0){
+						output=output+"--------";
+					}
+				}
+				count++;
+			}
 		
-
+			System.out.println(output);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -92,7 +114,7 @@ public class demoExercise {
 				System.out.println("I have built the model in " +duration +" seconds \n");
 				// Get current size of heap in bytes
 				long heapSize = Runtime.getRuntime().totalMemory();
-				System.out.println("heapsize: " + heapSize);
+				/*System.out.println("heapsize: " + heapSize);
 				// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
 				// Any attempt will result in an OutOfMemoryException.
 				long heapMaxSize = Runtime.getRuntime().maxMemory();
@@ -129,7 +151,7 @@ System.out.println("heap maz size: " + heapMaxSize);
 				skipTrigram.perplexityOf("Jeremy Corbyn is the new Labour party leader", unigram);	
 				//skipTrigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);	
 				//skipTrigram.perplexityOf("bananas and cream", unigram);
-				//skipTrigram.perplexityOf("Woman walked to a pub", unigram);
+				//skipTrigram.perplexityOf("Woman walked to a pub", unigram);*/
 				
 				if (br !=null){
 					br.close();
@@ -139,4 +161,4 @@ System.out.println("heap maz size: " + heapMaxSize);
 			}
 		}
 	}
-}*/
+}
