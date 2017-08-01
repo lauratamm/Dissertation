@@ -9,9 +9,9 @@ import java.text.BreakIterator;
 import java.util.Arrays;
 import java.util.Locale;
 
+import bigram.BigramModel;
 import dissertation.TidyUpData;
 import dissertation.UnigramModel;
-
 public class DemoSkipBigram {
 
 	public static void main(String[] args) {
@@ -24,11 +24,12 @@ public class DemoSkipBigram {
 	
 		
 		SkipBigramModel skipBigram = new SkipBigramModel();
+		BigramModel bigram = new BigramModel();
 		//SkipTrigramModel skipTrigram = new SkipTrigramModel();
 		UnigramModel unigram = new UnigramModel();	
 		TidyUpData tidyUpData= new TidyUpData();
 		
-		File file = new File("mediumData.txt");
+		File file = new File("largeData.txt");
 		FileInputStream fis = null;
 		BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.UK);
 		BufferedReader br=null;
@@ -65,23 +66,14 @@ public class DemoSkipBigram {
 					//get skip-bigram counts
 					skipBigram.getSkipBigramCounts(shortSentenceArrayTidiedUp);	
 					//System.out.println("All skip-bigrams: "+skipBigram.skipBigramCounts);
-					//get skip-trigram counts
-					//skipTrigram.getSkipTrigramCounts(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);	
 					noOfSentences++;
 				}
 			}
 			//calculate probabilities
 			skipBigram.computeFrequencyOfFrequencyCounts(unigram);
-			//skipTrigram.computeFrequencyOfFrequencyCounts(unigram);
 			skipBigram.calculateProbabilityOfUnseenWords(unigram);
-			//skipTrigram.calculateProbabilityOfUnseenWords(unigram);
-			//System.out.println("counts: "+skipBigram.skipBigramCounts);
-			//skipTrigram.calculateProbability(skipBigram.skipBigramCounts);
 			skipBigram.calculateProbability(unigram);
-			
-		
-
-			
+					
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -91,29 +83,9 @@ public class DemoSkipBigram {
 				endTime = System.nanoTime();
 				double duration = (endTime - startTime) / 1000000000.0;
 				System.out.println("\n\nI have built the model in " +duration +" seconds");
-				// Get current size of heap in bytes
-				long heapSize = Runtime.getRuntime().totalMemory();
-				//System.out.println("heapsize: " + heapSize);
-				// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
-				// Any attempt will result in an OutOfMemoryException.
-				long heapMaxSize = Runtime.getRuntime().maxMemory();
-				//System.out.println("heap maz size: " + heapMaxSize);
-				// Get amount of free memory within the heap in bytes. This size will increase
-				// after garbage collection and decrease as new objects are created.
-				long heapFreeSize = Runtime.getRuntime().freeMemory();
-				//System.out.println("heap free size: " +heapFreeSize);
 				System.out.println("No of sentences: " + noOfSentences);
 				System.out.println("Word count: "+ unigram.getTotalWordCount());
-				//System.out.println("\nAll skip-bigrams: \n" + skipBigram.skipBigramCounts);
-				//System.out.println("No of keys in bigram count: "+ skipBigram.skipBigramCounts.keySet().size());
-				//System.out.println("No of keys in tri count: "+ skipTrigram.skipTrigramCounts.keySet().size());
-				
-				
-				//System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
-				//System.out.println("last key: " +skipBigram.skipBigramCounts.lastKey());
-				//System.out.println("counts: "+skipBigram.skipBigramCounts);
-				//System.out.println("probabilities: "+skipBigram.skipBigramProbability);
-				System.out.println("Bigram outcomes: \n");
+			/*	System.out.println("\nBigram outcomes: \n");
 				skipBigram.perplexityOf("Jeremy Corbyn", unigram);
 				skipBigram.perplexityOf("Jeremy Corbin", unigram);
 				skipBigram.perplexityOf("The man walked", unigram);
@@ -124,10 +96,11 @@ public class DemoSkipBigram {
 				skipBigram.perplexityOf("Jeremy Corbyn is the new Labour party leader", unigram);
 				skipBigram.perplexityOf("bananas and cream", unigram);
 				skipBigram.perplexityOf("bananas and cream bananas and cream", unigram);
-				skipBigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);
+				skipBigram.perplexityOf("Jeremy Corbyn decided to immigrate to the USA", unigram);*/
 				System.out.println("\n\n --------------\n\n");
 				
-				//skipBigram.findSuitableWord("W", "Start wood for money", unigram);
+				skipBigram.findSuitableWord('c',"Start chopping wood for money", "Start wood for money", unigram, bigram);
+				skipBigram.findSuitableWord('c',"Cobbler initially records footwear", "initially records footwear", unigram, bigram);
 				//skipBigram.findSuitableWord("W", "Row about head of cat", unigram);
 				//System.out.println("\n\nTrigram outcomes: \n");		
 				//skipTrigram.perplexityOf("The man walked to the pub", unigram);

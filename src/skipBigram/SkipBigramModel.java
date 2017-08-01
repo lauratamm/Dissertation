@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.HashMap;
-
+import bigram.*;
 import dissertation.Dictionary;
 import dissertation.TidyUpData;
 import dissertation.UnigramModel;
@@ -349,9 +350,9 @@ public class SkipBigramModel {
 			printPerplexityDetails();
 		}*/
 
-		//if (clue.equals("Start wood for money chopping")) {
+		if (clue.equals("Start wood for money chopping")) {
 			System.out.println(thePerplexity +"   " +clue);
-		//}
+		}
 		return thePerplexity;
 	}
 
@@ -516,38 +517,69 @@ public void calculateProbabilityOfUnseenWords(UnigramModel unigram) {
 		return false;
 	}
 	
-	public void findSuitableWord (String firstLetter, String givenWords, UnigramModel unigram) {		
+	public void findSuitableWord (char firstLetter, String originalClue, String givenWords, UnigramModel unigram, BigramModel bigram) {		
 		Double perplexityOfClue=100000.00;
-		Double lastPerplexity;
-		HashMap<Double, String> mostProbableClues = new HashMap<Double, String>();
-		HashMap<String, Double> wordsFoundBySkipgram = new HashMap<String,Double>();
+		TreeMap<Double, String> mostProbableClues = new TreeMap<Double, String>();
+		TreeMap<String, Double> wordsFoundBySkipgram = new TreeMap<String,Double>();
 		Dictionary dictionary = new Dictionary();
-		boolean firstWord = true;
-		int number=0;
-		for (String word : unigram.allGWords) {
-			String completeClue = givenWords+ " " + word;
-			
+		int count=0;
+		
+		//ArrayList<String> wordsStartingWithChosenLetter = unigram.getAllWordsStartingWith(firstLetter);
+		ArrayList<String> wordsStartingWithChosenLetter = new ArrayList<>(dictionary.getAllEntries());
+		for (String word : wordsStartingWithChosenLetter) {
+			String completeClue = givenWords+ " " + word;		
 			if (perplexityOf(completeClue, unigram)<perplexityOfClue) {
-				number++;
 				mostProbableClues.put(perplexityOf(completeClue, unigram), word);
 			}		
 		}
 		
-		int count=0;
-		System.out.println(number);
-		System.out.println(unigram.allGWords.size());
-		System.out.println(mostProbableClues.keySet().size());
 		for (Double perplexity: mostProbableClues.keySet()){	
 			if (count<=50){
 				wordsFoundBySkipgram.put(mostProbableClues.get(perplexity), perplexity);
-				System.out.println(mostProbableClues.get(perplexity) + ": " + perplexity);
+				//System.out.println(mostProbableClues.get(perplexity) + ": " + perplexity);
 				count++;
 			}
 			else break;
 		}
-		
-		
+		bigramPerplexity(givenWords, originalClue, wordsFoundBySkipgram, bigram);
 	}
 	
-	
+	private void bigramPerplexity(String givenWords, String originalClue, TreeMap<String, Double> wordsFoundBySkipgram, BigramModel bigram) {
+
+		int position=99;
+		//get the position of the missing word in the clue
+		String[] givenWordArray=givenWords.split(" ");
+		String[] originalClueArray = originalClue.split(" ");
+		for (int loop=0; loop<originalClueArray.length; loop++){
+			if (!originalClueArray[loop].equals(givenWordArray[loop])){
+				position = loop;
+				break;
+			}
+		}
+		
+		String[] newClueArray= new String[originalClueArray.length];
+		for (int loop=0; loop<originalClueArray.length; loop++){		
+			if (loop!=position){		
+				newClueArray[loop]=originalClueArray[loop];
+			} else {
+				newClueArray[loop]="";
+			}
+		}
+		
+		System.out.println(Arrays.toString(newClueArray));
+		TreeMap <Double, String> bigramPerplexities = new TreeMap<>();
+		for (String word: wordsFoundBySkipgram.keySet()){
+			newClueArray[position]=word;
+			String completeClue="";
+			for (int loop=0; loop<newClueArray.length; loop++){
+				completeClue=completeClue+" "+newClueArray[loop];
+			}
+			
+			bigramPerplexities.put(bigram.perplexityOf(completeClue), completeClue);
+		}
+		
+		for(Double perplexity : bigramPerplexities.keySet()){
+			System.out.println(perplexity + " : "+ bigramPerplexities.get(perplexity));
+		}
+	}
 }

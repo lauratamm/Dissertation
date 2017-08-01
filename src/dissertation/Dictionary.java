@@ -1,20 +1,16 @@
 package dissertation;
-
-
-	import java.io.BufferedInputStream;
-	import java.io.BufferedReader;
-	import java.io.File;
-	import java.io.FileInputStream;
-	import java.io.FileNotFoundException;
-	import java.io.IOException;
-	import java.io.InputStreamReader;
-	import java.util.ArrayList;
-	import java.util.Random;
-	import java.util.Set;
-	import java.util.TreeMap;
-	import java.util.TreeSet;
-
-
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 	/**
 	 * Dictionary
@@ -33,7 +29,7 @@ package dissertation;
 				//printAll();
 			//loadAWords();
 			//loadBWords();
-			//loadCWords();
+			loadCWords();
 			//loadDWords();
 			//loadEWords();
 			//loadFWords();
@@ -53,10 +49,10 @@ package dissertation;
 			//loadTWords();
 			//loadUWords();
 			//loadVWords();
-			loadWWords();
+			//loadWWords();
 			//loadXWords();
 			//loadYWords();
-			//loadZWords();
+			//loadZWords();	
 		}
 
 		private void initialiseStructure() {
@@ -3691,6 +3687,11 @@ package dissertation;
 			meanings = new ArrayList <String>();
 			meanings.add("composer");
 			this.theWords.put(key, meanings);
+			
+			key = "chopping";
+			meanings = new ArrayList <String>();
+			meanings.add("cutting");
+			this.theWords.put(key, meanings);
 
 			key = "choral";
 			meanings = new ArrayList <String>();
@@ -3987,6 +3988,11 @@ package dissertation;
 			key = "coat";
 			meanings = new ArrayList <String>();
 			meanings.add("garment");
+			this.theWords.put(key, meanings);
+			
+			key = "cobbler";
+			meanings = new ArrayList <String>();
+			meanings.add("shoe mender");
 			this.theWords.put(key, meanings);
 
 			key = "coco";
@@ -4835,6 +4841,11 @@ package dissertation;
 			meanings.add("pricier");
 			this.theWords.put(key, meanings);
 			
+			key = "death";
+			meanings = new ArrayList <String>();
+			meanings.add("the end");
+			this.theWords.put(key, meanings);
+			
 			key = "debate";
 			meanings = new ArrayList <String>();
 			meanings.add("discussion");
@@ -4858,6 +4869,12 @@ package dissertation;
 			key = "decanter";
 			meanings = new ArrayList <String>();
 			meanings.add("glass container");
+			this.theWords.put(key, meanings);
+			
+			key = "december";
+			meanings = new ArrayList <String>();
+			meanings.add("last month");
+			meanings.add("month");
 			this.theWords.put(key, meanings);
 			
 			key = "decide";
@@ -5435,6 +5452,11 @@ package dissertation;
 			meanings.add("port");
 			this.theWords.put(key, meanings);
 			
+			key = "downturn";
+			meanings = new ArrayList <String>();
+			meanings.add("decline in business");
+			this.theWords.put(key, meanings);
+			
 			key = "doze";
 			meanings = new ArrayList <String>();
 			meanings.add("sleep");
@@ -5539,6 +5561,11 @@ package dissertation;
 			meanings = new ArrayList <String>();
 			meanings.add("exercise");
 			meanings.add("practice");
+			this.theWords.put(key, meanings);
+			
+			key = "drinking";
+			meanings = new ArrayList <String>();
+			meanings.add("boozing");
 			this.theWords.put(key, meanings);
 			
 			key = "dripping";
@@ -6110,9 +6137,14 @@ package dissertation;
 			meanings.add("underline");
 			this.theWords.put(key, meanings);
 			
-			key = "nero";
+			key = "emperor";
 			meanings = new ArrayList <String>();
-			meanings.add("emperor");
+			meanings.add("nero");
+			this.theWords.put(key, meanings);
+			
+			key = "empty";
+			meanings = new ArrayList <String>();
+			meanings.add("vacant");
 			this.theWords.put(key, meanings);
 			
 			key = "emu";
@@ -6374,6 +6406,11 @@ package dissertation;
 			meanings.add("period");
 			this.theWords.put(key, meanings);
 			
+			key = "erasing";
+			meanings = new ArrayList <String>();
+			meanings.add("rubbing out");
+			this.theWords.put(key, meanings);
+			
 			key = "Erasmus";
 			meanings = new ArrayList <String>();
 			meanings.add("scholar");
@@ -6536,6 +6573,11 @@ package dissertation;
 			meanings.add("flat");
 			meanings.add("regular");
 			meanings.add("uniform");
+			this.theWords.put(key, meanings);
+			
+			key = "evening";
+			meanings = new ArrayList <String>();
+			meanings.add("end of the day");
 			this.theWords.put(key, meanings);
 			
 			key = "event";
@@ -7700,6 +7742,17 @@ package dissertation;
 			meanings.add("well-mannered chap");
 			this.theWords.put(key, meanings);
 			
+			key = "geoff";
+			meanings = new ArrayList <String>();
+			meanings.add("man");
+			this.theWords.put(key, meanings);
+			
+			key = "george";
+			meanings = new ArrayList <String>();
+			meanings.add("king");
+			meanings.add("man");
+			this.theWords.put(key, meanings);
+			
 			key = "geraniums";
 			meanings = new ArrayList <String>();
 			meanings.add("flowers");
@@ -7750,6 +7803,12 @@ package dissertation;
 			meanings.add("card game");
 			meanings.add("drink");
 			meanings.add("spirit");
+			this.theWords.put(key, meanings);
+			
+			key = "ginger";
+			meanings = new ArrayList <String>();
+			meanings.add("light reddish-yellow");
+			meanings.add("spice");
 			this.theWords.put(key, meanings);
 			
 			key = "gins";
@@ -7966,6 +8025,11 @@ package dissertation;
 			key = "got";
 			meanings = new ArrayList <String>();
 			meanings.add("received");
+			this.theWords.put(key, meanings);
+			
+			key = "grabbing";
+			meanings = new ArrayList <String>();
+			meanings.add("snatching");
 			this.theWords.put(key, meanings);
 			
 			key = "grain";
@@ -8485,6 +8549,12 @@ package dissertation;
 			meanings = new ArrayList <String>();
 			meanings.add("part of the foot");
 			meanings.add("shoe part");
+			this.theWords.put(key, meanings);
+			
+			key = "heels";
+			meanings = new ArrayList <String>();
+			meanings.add("parts of the foot");
+			meanings.add("shoe parts");
 			this.theWords.put(key, meanings);
 			
 			key = "held";
@@ -9633,6 +9703,12 @@ package dissertation;
 			meanings.add("tag");
 			this.theWords.put(key, meanings);
 			
+			key = "labour";
+			meanings = new ArrayList <String>();
+			meanings.add("party");
+			meanings.add("work");
+			this.theWords.put(key, meanings);
+			
 			key = "lace";
 			meanings = new ArrayList <String>();
 			meanings.add("material");
@@ -10200,6 +10276,7 @@ package dissertation;
 			meanings.add("illuminate");
 			meanings.add("lamp");
 			meanings.add("set fire to");
+			meanings.add("sunny");
 			meanings.add("torch");
 			this.theWords.put(key, meanings);
 			
@@ -10213,6 +10290,7 @@ package dissertation;
 			meanings = new ArrayList <String>();
 			meanings.add("astronomical distance");
 			meanings.add("long distance");
+			meanings.add("long way off");
 			this.theWords.put(key, meanings);
 					
 			key = "like";
@@ -10378,6 +10456,11 @@ package dissertation;
 			key = "loath";
 			meanings = new ArrayList <String>();
 			meanings.add("reluctant");
+			this.theWords.put(key, meanings);
+			
+			key = "loaves";
+			meanings = new ArrayList <String>();
+			meanings.add("bread");
 			this.theWords.put(key, meanings);
 			
 			key = "lob";
@@ -11940,6 +12023,12 @@ package dissertation;
 			key = "nett";
 			meanings = new ArrayList <String>();
 			meanings.add("after deductions");
+			this.theWords.put(key, meanings);
+			
+			key = "netting";
+			meanings = new ArrayList <String>();
+			meanings.add("acquiring money");
+			meanings.add("part of the goalpost");
 			this.theWords.put(key, meanings);
 					
 			key = "never";
@@ -14370,6 +14459,11 @@ package dissertation;
 			meanings.add("demonstrates");
 			this.theWords.put(key, meanings);
 			
+			key = "provided";
+			meanings = new ArrayList <String>();
+			meanings.add("supplied");
+			this.theWords.put(key, meanings);
+			
 			key = "publisher";
 			meanings = new ArrayList <String>();
 			meanings.add("supplier of literature");
@@ -14383,6 +14477,11 @@ package dissertation;
 			key = "pug";
 			meanings = new ArrayList <String>();
 			meanings.add("dog");
+			this.theWords.put(key, meanings);
+			
+			key = "pulling";
+			meanings = new ArrayList <String>();
+			meanings.add("tugging");
 			this.theWords.put(key, meanings);
 			
 			key = "pulse";
@@ -14419,6 +14518,11 @@ package dissertation;
 			key = "puritans";
 			meanings = new ArrayList <String>();
 			meanings.add("church reformers");
+			this.theWords.put(key, meanings);
+			
+			key = "pursue";
+			meanings = new ArrayList <String>();
+			meanings.add("chase");
 			this.theWords.put(key, meanings);
 			
 			key = "push";
@@ -16141,15 +16245,20 @@ package dissertation;
 			meanings = new ArrayList <String>();
 			meanings.add("step");
 			this.theWords.put(key, meanings);
-			
-			key = "runs";
+					
+			key = "running";
 			meanings = new ArrayList <String>();
-			meanings.add("races");
+			meanings.add("working");
 			this.theWords.put(key, meanings);
 			
 			key = "runt";
 			meanings = new ArrayList <String>();
 			meanings.add("littlest piggy");
+			this.theWords.put(key, meanings);
+			
+			key = "runs";
+			meanings = new ArrayList <String>();
+			meanings.add("races");
 			this.theWords.put(key, meanings);
 			
 			key = "runway";
@@ -16541,6 +16650,11 @@ package dissertation;
 			meanings = new ArrayList <String>();
 			meanings.add("country");
 			this.theWords.put(key, meanings);
+					
+			key = "scottish";
+			meanings = new ArrayList <String>();
+			meanings.add("from Scotland");
+			this.theWords.put(key, meanings);
 			
 			key = "scout";
 			meanings = new ArrayList <String>();
@@ -16639,6 +16753,11 @@ package dissertation;
 			key = "seance";
 			meanings = new ArrayList <String>();
 			meanings.add("spirited meeting");
+			this.theWords.put(key, meanings);
+			
+			key = "searing";
+			meanings = new ArrayList <String>();
+			meanings.add("cooking technique");
 			this.theWords.put(key, meanings);
 			
 			key = "seat";
@@ -17572,6 +17691,11 @@ package dissertation;
 			key = "soap";
 			meanings = new ArrayList <String>();
 			meanings.add("TV programme");
+			this.theWords.put(key, meanings);
+			
+			key = "sob";
+			meanings = new ArrayList <String>();
+			meanings.add("cry");
 			this.theWords.put(key, meanings);
 			
 			key = "sock";
@@ -19859,6 +19983,11 @@ package dissertation;
 			meanings.add("traveling for recreation");
 			this.theWords.put(key, meanings);
 			
+			key = "tournament";
+			meanings = new ArrayList <String>();
+			meanings.add("competition");
+			this.theWords.put(key, meanings);
+			
 			key = "tower";
 			meanings = new ArrayList <String>();
 			meanings.add("tall building");
@@ -19893,6 +20022,11 @@ package dissertation;
 			key = "trade";
 			meanings = new ArrayList <String>();
 			meanings.add("deal");
+			this.theWords.put(key, meanings);
+			
+			key = "trader";
+			meanings = new ArrayList <String>();
+			meanings.add("vendor");
 			this.theWords.put(key, meanings);
 			
 			key = "traders";
@@ -21069,6 +21203,16 @@ package dissertation;
 			meanings.add("wimp");
 			this.theWords.put(key, meanings);
 			
+			key = "weeping";
+			meanings = new ArrayList <String>();
+			meanings.add("crying");
+			this.theWords.put(key, meanings);
+			
+			key = "weevil";
+			meanings = new ArrayList <String>();
+			meanings.add("beetle");
+			this.theWords.put(key, meanings);
+			
 			key = "well";
 			meanings = new ArrayList <String>();
 			meanings.add("healthy");
@@ -21085,14 +21229,9 @@ package dissertation;
 			meanings.add("from part of Britain");
 			this.theWords.put(key, meanings);
 			
-			key = "weeping";
+			key = "were";
 			meanings = new ArrayList <String>();
-			meanings.add("crying");
-			this.theWords.put(key, meanings);
-			
-			key = "weevil";
-			meanings = new ArrayList <String>();
-			meanings.add("beetle");
+			meanings.add("used to be");
 			this.theWords.put(key, meanings);
 			
 			key = "wheel";
@@ -21302,6 +21441,11 @@ package dissertation;
 			meanings.add("raising agent");
 			this.theWords.put(key, meanings);
 			
+			key = "yelllow";
+			meanings = new ArrayList <String>();
+			meanings.add("colour");
+			this.theWords.put(key, meanings);
+			
 			key = "yes";
 			meanings = new ArrayList <String>();
 			meanings.add("ok");
@@ -21346,6 +21490,11 @@ package dissertation;
 			key = "you";
 			meanings = new ArrayList <String>();
 			meanings.add("thee");
+			this.theWords.put(key, meanings);
+			
+			key = "youth";
+			meanings = new ArrayList <String>();
+			meanings.add("young");
 			this.theWords.put(key, meanings);
 			
 		}// end loadYWords

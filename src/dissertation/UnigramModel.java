@@ -8,12 +8,6 @@ public class UnigramModel  {
 	public UnigramModel(){};
 	public TreeMap<String, Integer> unigramCounts = new TreeMap<String, Integer>();
 	int numberOfWords;
-	public ArrayList <String> allCWords = new ArrayList<String>();
-	public ArrayList <String> allGWords = new ArrayList<String>();
-	
-	
-
-	
 	
 	public void countEachWord(String[] sentenceArray) {
 		
@@ -26,12 +20,6 @@ public class UnigramModel  {
 			
 			}
 			
-			
-			char[] letters = sentenceArray[loop].toCharArray();
-				
-			if (letters[0]==('c') && !allCWords.contains(sentenceArray[loop])){
-				allCWords.add(sentenceArray[loop]);
-			}
 			//increase word count
 			numberOfWords++;
 			
@@ -43,5 +31,15 @@ public class UnigramModel  {
 		return this.numberOfWords;
 	}
 
+	public ArrayList <String> getAllWordsStartingWith (char letter){
+		ArrayList <String> allWordsStartingWithChosenLetter = new ArrayList<String>();
+		for (String word: unigramCounts.keySet()){
+			char[] letters = word.toCharArray();
+			if (letters[0]==(letter) && !allWordsStartingWithChosenLetter.contains(word)){
+				allWordsStartingWithChosenLetter.add(word);
+			}
+		}		
+		return allWordsStartingWithChosenLetter;
+	}
 	
 }

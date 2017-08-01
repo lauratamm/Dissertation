@@ -36,7 +36,12 @@ public class DemoSkipTrigram {
 		BufferedReader br=null;
 		int noOfSentences=0;
 		int longSentence=0;
-		int count=0;
+		int countSmall=0;
+		int count30to40=0;
+		int count40to50=0;
+		int count50to60=0;
+		int countOver60=0;
+		
 		try {
 			String line= ""; 
 			fis = new FileInputStream(file);
@@ -68,33 +73,42 @@ public class DemoSkipTrigram {
 					//get skip-bigram counts
 					skipBigram.getSkipBigramCounts(shortSentenceArrayTidiedUp);	
 					//skipTrigram.getSkipTrigramCountsTest(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
-					if(shortSentenceArrayTidiedUp.length<50){
+					/*if(shortSentenceArrayTidiedUp.length<1){
 						skipTrigram.getSkipTrigramCountsTest(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
 					}
 					else {
 						skipTrigram.getSkipTrigramCountsMethod3(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);	
 					}
-					
-					if (shortSentenceArrayTidiedUp.length>100) {
-						if (count<10){
-							System.out.println("Dealing with: " +theSentence);
-							count++;
-						}
-						longSentence++;
+					*/
+					if (shortSentenceArrayTidiedUp.length<=30){
+						countSmall++;
+					}
+					else if (shortSentenceArrayTidiedUp.length>30 && shortSentenceArrayTidiedUp.length<=40) {
+						count30to40++;
+					}
+					else if (shortSentenceArrayTidiedUp.length>40 && shortSentenceArrayTidiedUp.length<=50){
+						count40to50++;
+					}else if (shortSentenceArrayTidiedUp.length>50 && shortSentenceArrayTidiedUp.length<=60){
+						count50to60++;
+					}else{
+						countOver60++;
 					}
 					
-					/*if(shortSentenceArrayTidiedUp.length<=6){
+					if(shortSentenceArrayTidiedUp.length<=40){
 						skipTrigram.getSkipTrigramCountsTest(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
-					}else if (shortSentenceArrayTidiedUp.length>6 && shortSentenceArrayTidiedUp.length<13){
-						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 2, skipTrigram, skipBigram);				
-					} else if (shortSentenceArrayTidiedUp.length>12 && shortSentenceArrayTidiedUp.length<19) {
-					
-						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 3, skipTrigram, skipBigram);
-					}else if (shortSentenceArrayTidiedUp.length>18 && shortSentenceArrayTidiedUp.length<25){				
+					}else if (shortSentenceArrayTidiedUp.length>40 && shortSentenceArrayTidiedUp.length<=80){				
+						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 2, skipTrigram, skipBigram);		
+					}else if (shortSentenceArrayTidiedUp.length>90 && shortSentenceArrayTidiedUp.length<=120){				
+						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 3, skipTrigram, skipBigram);		
+					}else if (shortSentenceArrayTidiedUp.length>120 && shortSentenceArrayTidiedUp.length<=160){				
 						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 4, skipTrigram, skipBigram);		
-					} else {
-						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 5, skipTrigram, skipBigram);
-					}*/
+					} else if (shortSentenceArrayTidiedUp.length>160 && shortSentenceArrayTidiedUp.length<=200){
+						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 5, skipTrigram, skipBigram);	
+					}else if (shortSentenceArrayTidiedUp.length>200 && shortSentenceArrayTidiedUp.length<=400){
+						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 10, skipTrigram, skipBigram);	
+					}else {
+						tidyUpData.splitSentenceIntoSections(shortSentenceArrayTidiedUp, 20, skipTrigram, skipBigram);
+					}
 					//skipTrigram.getSkipTrigramCountsMethod3(shortSentenceArrayTidiedUp, skipBigram.skipBigramCounts);
 					//System.out.println("\nAll skip-trigrams: "+skipTrigram.skipTrigramCounts);
 					noOfSentences++;
@@ -147,6 +161,11 @@ public class DemoSkipTrigram {
 				
 				System.out.println(unigram.getTotalWordCount() +" word count \n\n");
 				
+				System.out.println("under 30: "+countSmall);
+				System.out.println("30 - 40: "+count30to40);
+				System.out.println("40 - 50: "+count40to50);
+				System.out.println("50 - 60: "+count50to60);
+				System.out.println("over 60: "+countOver60);
 				//System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
 				//System.out.println("last key: " +skipBigram.skipBigramCounts.lastKey());
 				//System.out.println("counts: "+skipBigram.skipBigramCounts);

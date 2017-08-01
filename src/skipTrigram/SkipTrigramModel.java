@@ -1254,7 +1254,7 @@ public class SkipTrigramModel {
 		//System.out.println("Prob of unseen words is " +probabilityOfUnseenWord);
 	}
 
-	public void findSuitableWord (String firstLetter, String givenWords, UnigramModel unigram) {		
+	public void findSuitableWord (char firstLetter, String givenWords, UnigramModel unigram) {		
 		Double perplexityOfClue=10000.00;
 		Double lastPerplexity;
 		HashMap<Double, String> mostProbableClues = new HashMap<Double, String>();
@@ -1262,7 +1262,7 @@ public class SkipTrigramModel {
 		Dictionary dictionary = new Dictionary();
 		boolean firstWord = true;
 		int number=0;
-		for (String word : unigram.allCWords) {
+		for (String word : unigram.getAllWordsStartingWith(firstLetter)) {
 			String completeClue = givenWords+ " " + word;
 			
 			if (perplexityOf(completeClue, unigram)<perplexityOfClue) {
