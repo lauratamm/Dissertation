@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
-
+import bigram.BigramModel;
 import dissertation.TidyUpData;
 import dissertation.UnigramModel;
 import skipBigram.SkipBigramModel;
+import trigram.TrigramModel;
 
 public class DemoSkipTrigram {
 
@@ -25,7 +26,8 @@ public class DemoSkipTrigram {
 		startTime = System.nanoTime();
 			
 		SkipBigramModel skipBigram = new SkipBigramModel();
-		
+		BigramModel bigram = new BigramModel();
+		//TrigramModel trigram = new TrigramModel();
 		SkipTrigramModel skipTrigram = new SkipTrigramModel();
 		UnigramModel unigram = new UnigramModel();	
 		TidyUpData tidyUpData= new TidyUpData();
@@ -161,11 +163,11 @@ public class DemoSkipTrigram {
 				
 				System.out.println(unigram.getTotalWordCount() +" word count \n\n");
 				
-				System.out.println("under 30: "+countSmall);
+				/*System.out.println("under 30: "+countSmall);
 				System.out.println("30 - 40: "+count30to40);
 				System.out.println("40 - 50: "+count40to50);
 				System.out.println("50 - 60: "+count50to60);
-				System.out.println("over 60: "+countOver60);
+				System.out.println("over 60: "+countOver60);*/
 				//System.out.println("first key:" +skipBigram.skipBigramCounts.firstKey());
 				//System.out.println("last key: " +skipBigram.skipBigramCounts.lastKey());
 				//System.out.println("counts: "+skipBigram.skipBigramCounts);
@@ -183,7 +185,7 @@ public class DemoSkipTrigram {
 				skipBigram.perplexityOf("bananas and cream bananas and cream", unigram);*/
 				
 				System.out.println("\n\nTrigram outcomes: \n");	
-				skipTrigram.perplexityOf("The man walked to the pub", unigram);
+				/*skipTrigram.perplexityOf("The man walked to the pub", unigram);
 				//skipBigram.perplexityOf("A child walked to the pub", unigram);		
 				//skipTrigram.perplexityOf("A politician walked to the office", unigram);
 				skipTrigram.perplexityOf("Jeremy Corbyn is the new Labour party leader", unigram);	
@@ -192,9 +194,37 @@ public class DemoSkipTrigram {
 				skipTrigram.perplexityOf("The teacher was going to mark him down for swearing", unigram);
 				skipTrigram.perplexityOf("bananas and cream bananas and cream", unigram);
 				skipTrigram.perplexityOf("the referendum will take place next year", unigram);
-				skipTrigram.perplexityOf("The weather was stormy that night", unigram);
+				skipTrigram.perplexityOf("The weather was stormy that night", unigram);*/
 				//skipTrigram.perplexityOf("Woman walked to a pub", unigram);
-				//skipTrigram.findSuitableWord("W", "Start wood for money", unigram);
+	
+				//skipTrigram.perplexityOf("Cut out tax before start of December", unigram);
+				skipTrigram.perplexityOf("Row about head of great cat", unigram);
+				skipTrigram.perplexityOf("Row about head of great balloon", unigram);
+				//skipTrigram.findSuitableWord('c',"Start chopping wood for money", "Start wood for money", unigram, bigram);
+				//skipTrigram.findSuitableWord('c',"Cobbler initially records footwear", "initially records footwear", unigram, bigram);
+				/*skipTrigram.findSuitableWord('d',"Poets start drinking in pubs", "poets start in pubs", unigram, bigram);
+				skipTrigram.findSuitableWord('d',"Might death start to appear unnatural", "Might start to appear unnatural", unigram, bigram);
+				skipTrigram.findSuitableWord('d',"Cut out tax before start of December", "Cut out tax before start of ", unigram, bigram);	
+				skipTrigram.findSuitableWord('e',"Thin boxes empty initially", "Thin boxes initially", unigram, bigram);	
+				skipTrigram.findSuitableWord('g', "Row about head of ginger cat", "Row about head of cat", unigram, bigram);
+				skipTrigram.findSuitableWord('g', "Geoff’s beginning to wander in a small wood", "beginning to wander in a small wood", unigram, bigram);
+				skipTrigram.findSuitableWord('g', "Sovereign the family start grabbing", "Sovereign the family start", unigram, bigram);
+				skipTrigram.findSuitableWord('l', "A labour leader taking many shares out", "A leader taking many shares out", unigram, bigram);
+				skipTrigram.findSuitableWord('l', "Family with first of loaves in oven", "Family with first of in oven", unigram, bigram);
+				skipTrigram.findSuitableWord('p', "Clothing provided initially by social workers", "Clothing initially by social workers", unigram, bigram);
+				skipTrigram.findSuitableWord('p', "Party leader is not pleased with gifts", "leader is not pleased with gifts", unigram, bigram);
+				skipTrigram.findSuitableWord('p', "Start pulling strings for situations", "Start strings for situations", unigram, bigram);
+				skipTrigram.findSuitableWord('r', "Singer producing sick note before start of recital", "Singer producing sick note before start of", unigram, bigram);
+				skipTrigram.findSuitableWord('r', "Artificial people start running with kinky boots", "Artificial people start with kinky boots", unigram, bigram);
+				skipTrigram.findSuitableWord('s', "Scottish leader with horse problem", "leader with horse problem", unigram, bigram);
+				skipTrigram.findSuitableWord('s', "Talk with Spanish leader at summit", "Talk with leader at summit", unigram, bigram);
+				skipTrigram.findSuitableWord('y', "Airbourne youth leader gets cast out", "Airbourne leader gets cast out", unigram, bigram);
+				skipTrigram.findSuitableWord('y', "Tin containing first of yellow colour", "Tin containing first of colour", unigram, bigram);
+				skipTrigram.findSuitableWord('t', "Check the accounts of German car trader first", "Check the accounts of German car first", unigram, bigram);
+				skipTrigram.findSuitableWord('t', "Concealed lid on top of tin", "Concealed lid on top of", unigram, bigram);
+				skipTrigram.findSuitableWord('a', "American leader getting cheeky again", "leader getting cheeky again", unigram, bigram);
+				skipTrigram.findSuitableWord('b', "Splendid bottle opener splendid", "Splendid opener splendid", unigram, bigram);
+				*/
 				if (br !=null){
 					br.close();
 				}

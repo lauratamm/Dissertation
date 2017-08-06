@@ -11,10 +11,10 @@ import skipBigram.SkipBigramModel;
 import skipTrigram.SkipTrigramModel;
 
 public class TidyUpData {
-	ArrayList <String> unwantedWords = new ArrayList();
+	public ArrayList <String> unwantedWords = new ArrayList();
 	public TidyUpData(){
 		
-		String [] unwantedWordsArray = {"the","i","you","and","a","to","it","of","that","in","yeah","was","he","on","no","oh","is","have","well","its","for","what","she","one","but","they","do","not","we","there","be","so","with","had","dont","at","this","thats","all","as","mm","like","her","go","if","just","up","get","then","are","can","his","yes","right","me","think","them","out","er","or","two","were","your","now","about","when","erm","see","im","did","been","by","from","my","him","would","want","mean","going","cos","here","some","come","an","put","how","could","ive","really","ill","very","three","look","hes","didnt","back","will","which","only","youre","say","theres","more","cant","off","who","where","gonna","five","four","why","over","bit","something","any","because","theyre","alright","other","has","youve","way","much","their","shes","into","went","these","ah","isnt","whats","done","doing","might","thing","than","last","before","first","too","havent","six","should","quite","sort","hundred","never","need","still","does","though","those","round","after","us","long","new","lot","doesnt","must","another","weve","away","twenty","even","half","make", "give","wouldnt","seven","okay","probably","eight","n","through", "always","things","ten","our","actually"};
+		String [] unwantedWordsArray = {"the","i","you","and","a","to","it","of","that","in","yeah","was","he","on","no","oh","is","have","well","its","for","what","she","one","but","they","do","not","we","there","be","so","with","had","dont","at","this","thats","all","as","mm","like","her","go","got","if","just","up","get","then","are","can","his","yes","right","me","think","them","out","er","or","two","were","your","now","about","when", "let", "lot", "erm","see","im","did","been","by","from","my","him","would","want","mean","going","cos","here","some","come","an","put","how","could","ive","really","ill","very","three","look","hes","couldnt","didnt","back","will","which","wont","only","youre","say","theres","more","cant","off","who","where","gonna","five","four","why","over","bit","something","any","because","theyre","alright","other","has","youve","way","much","their","shes","into","went","these","ah","isnt","whats","done","doing","might","thing","than","last","before","first","too","havent","six","should","quite","sort","hundred","never","need","still","does","though","those","round","after","us","lot","doesnt","must","another","weve","away","twenty","even","half","make", "give","shouldnt","wouldnt","seven","okay","probably","eight","n","through", "always","things","ten","our","actually", "do", "doing", "done"};
 		
 		unwantedWords.addAll(Arrays.asList(unwantedWordsArray));
 		/*this.unwantedWords.add("a");
@@ -35,6 +35,9 @@ public class TidyUpData {
 		this.unwantedWords.add("—");
 		this.unwantedWords.add(":");*/
 	}
+	
+
+	
 	
 	public String[] removeStopWords(String theSentence){		
 		ArrayList <String> shortSentenceList = new ArrayList<String>();

@@ -4,8 +4,8 @@ public class BigramModelDemo {
 	public static void main(String[] args) {
 				
 		BigramModel bim = new BigramModel();
-	/*	bim.perplexityOf("Start campbell wood for money");
-		bim.perplexityOf("Start cashpoint wood for money");
+
+		/*bim.perplexityOf("Start cashpoint wood for money");
 		bim.perplexityOf("Start cos wood for money");
 		bim.perplexityOf("Start clintons wood for money");
 		bim.perplexityOf("Start cant wood for money");
@@ -51,7 +51,9 @@ public class BigramModelDemo {
 		
 		//bim.playShannonGame();*/
 		
-		bim.findSuitableWord('c', "Start chopping wood for money", "Start wood for money", bim);
+		//bim.perplexityOf("Start carved wood for money");
+		//bim.findSuitableWord('c', "Start chopping wood for money", "Start wood for money", bim);
+		bim.findSuitableWord('d',"Poets start drinking in pubs", "poets start in pubs", bim);
 		/**
 		//crossword clues from i
 		bim.perplexityOf("Stern violinist");

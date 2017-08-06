@@ -16,19 +16,20 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.TreeSet;
 
 import dissertation.Dictionary;
 import dissertation.UnigramModel;
 
 public class BigramModel {
-	TreeMap <String, TreeMap <String, Double>> bigramCounts = new TreeMap <String, TreeMap <String, Double>> ();
-	TreeMap <String, Integer> unigramCounts = new TreeMap <String, Integer> (); //unigram counts
-	TreeMap <Integer, Integer> frequencyOfFrequencyCounts = new TreeMap <Integer, Integer> (); 
-	//TreeMap <Double, String> cluesRankOrdered = new TreeMap <Double, String> ();
+	HashMap <String, HashMap <String, Double>> bigramCounts = new HashMap <String, HashMap <String, Double>> ();
+	HashMap <String, Integer> unigramCounts = new HashMap <String, Integer> (); //unigram counts
+	HashMap <Integer, Integer> frequencyOfFrequencyCounts = new HashMap <Integer, Integer> (); 
+	//HashMap <Double, String> cluesRankOrdered = new HashMap <Double, String> ();
 	//private TreeSet <RankedClue> allRankedClues = new TreeSet <RankedClue> ();
 	private TreeSet <RankedClue> allRankedClues = new TreeSet <RankedClue> ();
-	TreeMap <String, TreeMap <String, Double>> biGramProbability;
+	HashMap <String, HashMap <String, Double>> biGramProbability;
 	
 	private FileInputStream fis;
 	private BufferedInputStream bis;
@@ -52,7 +53,7 @@ public class BigramModel {
 	 * Generally, set to false to work in logarithms
 	 * Set to true with very small training sets to view probabilities in decimal
 	 */
-	private boolean decimal = false;
+	private boolean decimal = true;
 	/**
 	 * Set to true to print all count and probabilities to files
 	 * Writing to files takes time and slows the model down
@@ -89,16 +90,22 @@ public class BigramModel {
 	 */
 	private int numberOfCommonlyUsedWordsInEnglish = 1000;
 	
+	
+	//unwantedWords.addAll(Arrays.asList(unwantedWordsArray));
+	
 	public ArrayList <String> getAllWordsStartingWith (char letter){
+		ArrayList <String> unwantedWords = new ArrayList <String>();
+		//String [] unwantedWordsArray = {"the","i","you","and","a","to","it","of","that","in","yeah","was","he","on","no","oh","is","have","well","its","for","what","she","one","but","they","do","not","we","there","be","so","with","had","dont","at","this","thats","all","as","mm","like","her","go","if","just","up","get","then","are","can","his","yes","right","me","think","them","out","er","or","two","were","your","now","about","when","erm","see","im","did","been","by","from","my","him","would","want","mean","going","cos","here","some","come","an","put","how","could","ive","really","ill","very","three","look","hes","couldnt","didnt","back","will","which","wont","only","youre","say","theres","more","cant","off","who","where","gonna","five","four","why","over","bit","something","any","because","theyre","alright","other","has","youve","way","much","their","shes","into","went","these","ah","isnt","whats","done","doing","might","thing","than","last","before","first","too","havent","six","should","quite","sort","hundred","never","need","still","does","though","those","round","after","us","long","new","lot","doesnt","must","another","weve","away","twenty","even","half","make", "give","shouldnt","wouldnt","seven","okay","probably","eight","n","through", "always","things","ten","our","actually"};
+		//unwantedWords.addAll(Arrays.asList(unwantedWordsArray));
 		ArrayList <String> allWordsStartingWithChosenLetter = new ArrayList<String>();
 		for (String word: unigramCounts.keySet()){
 			char[] letters = word.toCharArray();
 
-			if (letters[0]==(letter) && !allWordsStartingWithChosenLetter.contains(word)){
+			if (letters[0]==(letter) && !allWordsStartingWithChosenLetter.contains(word) && !unwantedWords.contains(word)){
 				allWordsStartingWithChosenLetter.add(word);
 			}
 		}	
-		//System.out.println("size: "+ allWordsStartingWithChosenLetter.size());
+		System.out.println("size: "+ allWordsStartingWithChosenLetter.size());
 		return allWordsStartingWithChosenLetter;
 	}
 	
@@ -195,7 +202,7 @@ public class BigramModel {
 		int length;
 		boolean firstWord = true;
 		String [] words;
-		TreeMap <String, Double> existingEntry;
+		HashMap <String, Double> existingEntry;
 		ArrayList <String> theWords;
 		double wordProbability;
 		
@@ -220,7 +227,7 @@ public class BigramModel {
 				//word i-1 is found
 				//System.out.println("word i-1 found " +words[loop - 1]);
 				//System.out.println("word i " +words[loop]);
-				//get a treemap of word/probability for the word we are dealing with (words[loop - 1])
+				//get a HashMap of word/probability for the word we are dealing with (words[loop - 1])
 				existingEntry = this.biGramProbability.get(words[loop - 1]);
 				
 				//test
@@ -366,10 +373,198 @@ public class BigramModel {
 			printPerplexityDetails();
 		}
 
-		
-		//System.out.println("Perplexity: " +thePerplexity +"   " +clue);
+		/*if (clue.equals("start chopping wood for money")){
+			System.out.println("Perplexity: " +thePerplexity +"   " +clue);
+		}*/
 		return thePerplexity;
 	}
+	
+	
+	public double perplexityOf2(String clue) {
+		//System.out.println("About to calculate perplexity");
+		clue = clue.toLowerCase();
+		double theProbability = 0;
+		double thePerplexity;
+		int length;
+		boolean firstWord = true;
+		String [] words;
+		HashMap <String, Double> existingEntry;
+		ArrayList <String> theWords;
+		double wordProbability;
+		
+		//convert to an array of words
+		words = clue.split(" ");
+		
+		//convert to an ArrayList
+		theWords = new ArrayList <String>(Arrays.asList(words));
+		theWords.add(0, "<s>");
+		theWords.add(theWords.size(), "</s>");
+		length = theWords.size();
+		
+		//convert back to an array
+		words = new String[theWords.size()];
+		words = theWords.toArray(words);
+		
+				
+		//iterate across the array of words
+		for(int loop = 1; loop < words.length; loop++) {
+			//if the preceeding word is listed in the probability table
+			if(this.biGramProbability.containsKey(words[loop - 1])) {
+				//word i-1 is found
+				//System.out.println("word i-1 found " +words[loop - 1]);
+				//System.out.println("word i " +words[loop]);
+				//get a HashMap of word/probability for the word we are dealing with (words[loop - 1])
+				existingEntry = this.biGramProbability.get(words[loop - 1]);
+				
+				//test
+				//System.out.println("FOR " +words[loop - 1]);
+				//for(String tempWord : existingEntry.keySet()) {
+					//System.out.println(tempWord);
+				//}
+				if(existingEntry.containsKey(words[loop])) {
+					//word i is found and so the bigram is found
+					//System.out.println("Word i found " +words[loop]);
+					//if(this.decimal) {
+						//calculate the probability in decimal
+						if(firstWord) {
+							//set probablity of the first bigram
+							theProbability = this.biGramProbability.get(words[loop - 1]).get(words[loop]);
+						/*	if(this.perplexityLogFile) {
+								this.perplexityDetails += "Bigram found " +words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";	
+							}*/
+							firstWord = false;
+						} else {
+							/*if(this.perplexityLogFile) {
+								this.perplexityDetails +=  "Bigram found " +words[loop - 1] + "  "  +words[loop] +" " +this.biGramProbability.get(words[loop - 1]).get(words[loop]) +"\n";
+								this.perplexityDetails +=  "Multiplying " + theProbability +" * " +this.biGramProbability.get(words[loop - 1]).get(words[loop]) + " to get ";								
+							}*/
+							//accumulate probability of bigrams to get the probability of the sentence
+							theProbability = theProbability * this.biGramProbability.get(words[loop - 1]).get(words[loop]);
+						/*	if(this.perplexityLogFile) {
+								this.perplexityDetails += theProbability  +"\n";
+							}*/
+														
+						}
+						/*}else {
+						//calculate the probability in logarithms
+						if(this.perplexityLogFile) {
+							this.perplexityDetails += "Bigram found " +words[loop - 1] + "  "  +words[loop] +" " +this.biGramProbability.get(words[loop - 1]).get(words[loop]) +"\n";
+							this.perplexityDetails += "Adding " + theProbability +" + " +this.biGramProbability.get(words[loop - 1]).get(words[loop]) + " to get ";
+						}
+						theProbability = theProbability + this.biGramProbability.get(words[loop - 1]).get(words[loop]);
+						if(this.perplexityLogFile) {
+							this.perplexityDetails += theProbability +"\n";
+						}
+					}*/
+				} else {
+					//Bi gram not found 
+					/*if(this.perplexityLogFile) {
+						this.perplexityDetails += " Bigram " +words[loop -1] +" " +words[loop] +" not found \n";
+					}*/
+					wordProbability = calculateProbabilityOf(words[loop]);
+					//if(this.decimal) {
+						//calculate the probability in decimal
+						if(firstWord) {
+							theProbability = wordProbability;
+							/*if(this.perplexityLogFile) {
+								this.perplexityDetails += words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";
+							}*/
+							firstWord = false;
+						} else {
+							/*if(this.perplexityLogFile) {
+								this.perplexityDetails += "Multiplying " + theProbability +" * " +wordProbability + " to get ";
+							}*/
+							theProbability = theProbability * wordProbability;
+							/*if(this.perplexityLogFile) {
+								this.perplexityDetails += theProbability +"\n";
+							}*/
+														
+						}
+					/*} else {
+						//calculate the probability in logarithms
+						wordProbability = Math.log10(wordProbability);
+						if(this.perplexityLogFile) {
+							this.perplexityDetails += "Adding " + theProbability +" + " +wordProbability + " to get ";
+						}
+						theProbability = theProbability + wordProbability;
+						if(this.perplexityLogFile) {
+							this.perplexityDetails += theProbability +"\n";
+						}
+					}*/
+					
+				}
+				
+			} else {
+				//Bi gram not found - lets use the unigram count
+				/*if(this.perplexityLogFile) {
+					this.perplexityDetails += "Bigram " +words[loop -1] +" - " +words[loop] +" not found\n ";
+				}*/
+				wordProbability = calculateProbabilityOf(words[loop]);
+				//if(this.decimal) {
+					//calculate the probability in decimal
+					if(firstWord) {
+						theProbability = wordProbability;
+						/*if(this.perplexityLogFile) {
+							this.perplexityDetails += words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";
+						}*/
+						firstWord = false;
+					} else {
+						/*if(this.perplexityLogFile) {
+							this.perplexityDetails += "Multiplying " + theProbability +" * " +wordProbability + " to get ";
+						}*/
+						theProbability = theProbability * wordProbability;
+						/*if(this.perplexityLogFile) {
+							this.perplexityDetails += theProbability +"\n";
+						}*/
+													
+					}
+				/*} else {
+					//calculate the probability in logarithms
+					wordProbability = Math.log10(wordProbability);
+					if(this.perplexityLogFile) {
+						this.perplexityDetails += "Adding " + theProbability +" + " +wordProbability + " to get ";
+					}
+					theProbability = theProbability + wordProbability;
+					if(this.perplexityLogFile) {
+						this.perplexityDetails += theProbability +"\n";
+					}
+				}*/
+			}
+		}
+		
+		//calculate the perplexity
+		//if(this.decimal) {
+			thePerplexity = Math.pow(theProbability, (-1.0/length));
+		/*} else {
+			//convert back to decimal before calculating perplexity
+			thePerplexity = Math.pow(Math.pow(10, theProbability), (-1.0/length));
+		}*/
+		
+		//If using individual calls print details in console
+	/*	if(!this.bulkLoad) {
+			//System.out.println(clue);
+			//System.out.println("Probability = " +theProbability);
+			//System.out.println("Perplexity = " +thePerplexity +"\n\n");	
+		} */
+		
+		
+
+		
+		//Not happy with this here - but  will move when model is finalised
+		/*if(this.perplexityLogFile  && !this.bulkLoad) {
+			this.perplexityDetails += clue +"\n";
+			this.perplexityDetails += "Probability " +theProbability +"\n";
+			this.perplexityDetails += "Perplexity " +thePerplexity +"\n\n\n";
+			
+			printPerplexityDetails();
+		}*/
+
+		/*if (clue.equals("start chopping wood for money")){
+			System.out.println("Perplexity: " +thePerplexity +"   " +clue);
+		}*/
+		return thePerplexity;
+	}
+	
 	
 	public double calculateProbabilityOf(String word) {
 		int numberOfTimesSeen;
@@ -483,7 +678,7 @@ public class BigramModel {
 	 		 
 	 		 //calculate number of bigrams - for printing only
 	 		 int bigramCounts = 0;
-	 		 TreeMap <String, Double> innerMap;
+	 		 HashMap <String, Double> innerMap;
 	 		 for(String word : this.bigramCounts.keySet()) {
 	 			 innerMap = this.bigramCounts.get(word);
 	 			 bigramCounts = bigramCounts + innerMap.size();
@@ -519,8 +714,8 @@ public class BigramModel {
 	}
 	
 	private void computeBigramCounts(String [] allWords) {
-		TreeMap <String, Double> newEntry;
-		TreeMap <String, Double> oldEntry;
+		HashMap <String, Double> newEntry;
+		HashMap <String, Double> oldEntry;
 		boolean displayUpdates = false;
 				
  		/*for testing
@@ -560,7 +755,7 @@ public class BigramModel {
     		} else {
     			//word does not exist
     			//create new key with next word value 1
-    			newEntry = new TreeMap <String, Double> ();
+    			newEntry = new HashMap <String, Double> ();
     			newEntry.put((String) allWords[loop + 1], (double) 1);
     			if(displayUpdates) {
     				System.out.println("Level 1 - Adding " + allWords[loop] +"  " +allWords[loop + 1]);	
@@ -794,24 +989,78 @@ public class BigramModel {
 	}//openFile
 
 	public void findSuitableWord (char firstLetter, String originalClue, String givenWords, BigramModel bigram) {		
-		Double perplexityOfClue=100000.00;
-		TreeMap<Double, String> mostProbableClues = new TreeMap<Double, String>();
-		TreeMap<String, Double> wordsFoundBySkipgram = new TreeMap<String,Double>();
-		Dictionary dictionary = new Dictionary();
-		int count=0;	
-		int position=99;
 		
+		TreeMap<Double, String> allPerplexitiesForClues;
+
+		Dictionary dictionary = new Dictionary();	
+		int position;
+
+		String[] givenWordArray=givenWords.toLowerCase().split(" ");
+		String[] originalClueArray = originalClue.toLowerCase().split(" ");
+		position = getPositionOfMissingWord(givenWordArray, originalClueArray);
+		String[] newClueArray=getNewArrayWithABlankForTheMissingWord(givenWordArray, originalClueArray, position);
+				
+		ArrayList<String> wordsStartingWithChosenLetter = getAllWordsStartingWith(firstLetter);
+		//ArrayList<String> wordsStartingWithChosenLetter = new ArrayList<>(dictionary.getAllEntries());
+		
+		allPerplexitiesForClues=addPerplexitiesOfCluesToMap(wordsStartingWithChosenLetter, newClueArray, position);
+		
+		getLowPerplexityClues(allPerplexitiesForClues);
+		
+		
+	}
+
+	private int getPositionOfMissingWord(String[] givenWordArray, String[] originalClueArray) {
+		int position=99;
 		//get the position of the missing word in the clue
-		String[] givenWordArray=givenWords.split(" ");
-		String[] originalClueArray = originalClue.split(" ");
 		for (int loop=0; loop<originalClueArray.length; loop++){
 			if (!originalClueArray[loop].equals(givenWordArray[loop])){
 				position = loop;
 				break;
 			}
 		}
-		
+		return position;
+	}
+
+	private void getLowPerplexityClues(TreeMap<Double, String> allPerplexitiesForClues) {
+		int count=1;
+		for (Double perplexity: allPerplexitiesForClues.keySet()){	
+			if (count<=10){
+				System.out.println(count+". "+allPerplexitiesForClues.get(perplexity) + ": " + perplexity);
+				count++;
+			}
+			else break;
+		}		
+	}
+
+	private TreeMap<Double, String> addPerplexitiesOfCluesToMap(ArrayList<String> wordsStartingWithChosenLetter, String[] newClueArray, int position) {
+		System.out.println("add perplexities to map");
+		TreeMap<Double, String> allPerplexitiesForClues = new TreeMap<Double, String>();
+		int count=1;
+		for (String word : wordsStartingWithChosenLetter) {			
+			newClueArray[position]=word;
+			String completeClue="";
+			boolean firstWord=true;
+			for (int loop=0; loop<newClueArray.length; loop++){
+				if (firstWord){
+					completeClue=completeClue+newClueArray[loop];
+					firstWord=false;
+				}
+				else{
+					completeClue=completeClue+" "+newClueArray[loop];
+				}
+			}		
+
+			allPerplexitiesForClues.put(perplexityOf(completeClue), newClueArray[position]);	
+			//System.out.println(count);
+			count++;
+		}
+		return allPerplexitiesForClues;
+	}
+
+	private String[] getNewArrayWithABlankForTheMissingWord(String[] givenWordArray, String[] originalClueArray, int position) {	
 		String[] newClueArray= new String[originalClueArray.length];
+		
 		for (int loop=0; loop<originalClueArray.length; loop++){		
 			if (loop!=position){		
 				newClueArray[loop]=originalClueArray[loop];
@@ -819,31 +1068,7 @@ public class BigramModel {
 				newClueArray[loop]="";
 			}
 		}
-			
-		//ArrayList<String> wordsStartingWithChosenLetter = getAllWordsStartingWith(firstLetter);
-		ArrayList<String> wordsStartingWithChosenLetter = new ArrayList<>(dictionary.getAllEntries());
-		for (String word : wordsStartingWithChosenLetter) {			
-			newClueArray[position]=word;
-			String completeClue="";
-			for (int loop=0; loop<newClueArray.length; loop++){
-				completeClue=completeClue+" "+newClueArray[loop];
-			}
-			
-			//System.out.println("complete clue: " +completeClue);
-			if (perplexityOf(completeClue)<perplexityOfClue) {
-				mostProbableClues.put(perplexityOf(completeClue), word);
-			}		
-		}
-		
-		for (Double perplexity: mostProbableClues.keySet()){	
-			if (count<=50){
-				wordsFoundBySkipgram.put(mostProbableClues.get(perplexity), perplexity);
-				System.out.println(mostProbableClues.get(perplexity) + ": " + perplexity);
-				count++;
-			}
-			else break;
-		}
-		
+		return newClueArray;
 	}
 	
 }

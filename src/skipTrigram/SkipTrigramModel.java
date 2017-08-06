@@ -7,13 +7,19 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.HashMap;
 
 import dissertation.Dictionary;
 import dissertation.TidyUpData;
 import dissertation.UnigramModel;
+import trigram.TrigramModel;
+
 import java.util.stream.Stream;
+
+import bigram.BigramModel;
+
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 public class SkipTrigramModel {
@@ -844,7 +850,7 @@ public class SkipTrigramModel {
 									theProbability = existingThirdWordEntries.get(words[thirdLoop+2]);
 									foundProbability=true;
 									firstTrigram=false;
-									//System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] + " probability" + " " + theProbability);
+									System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] + " probability" + " " + theProbability);
 									/*if(this.perplexityLogFile) {
 										this.perplexityDetails += "Bigram found " +words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";	
 									}
@@ -863,7 +869,7 @@ public class SkipTrigramModel {
 								} else {
 									theProbability= theProbability * existingThirdWordEntries.get(words[thirdLoop+2]);
 									foundProbability=true;
-									//System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] +" probability for" + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
+									System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] +" probability for" + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
 									//System.out.println(" probability sum" + " " + theProbability);
 								}
 							}
@@ -880,7 +886,7 @@ public class SkipTrigramModel {
 										theProbability = existingThirdWordEntries.get(words[secondLoop+1]);
 										foundProbability=true;
 										firstTrigram=false;
-										//System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] + " probability" + " " + theProbability);
+										System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] + " probability" + " " + theProbability);
 										/*if(this.perplexityLogFile) {
 											this.perplexityDetails += "Bigram found " +words[loop - 1] + "  "  +words[loop] +" " +theProbability +"\n";	
 										}
@@ -899,7 +905,7 @@ public class SkipTrigramModel {
 									} else {
 										theProbability= theProbability * existingThirdWordEntries.get(words[secondLoop+1]);
 										foundProbability=true;
-										//System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] +" probability for" + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
+										System.out.println(words[outerLoop] + " " + words[secondLoop+1] + " " + words[thirdLoop+2] +" probability for" + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
 										//System.out.println(" probability sum" + " " + theProbability);
 									}
 								}
@@ -917,13 +923,13 @@ public class SkipTrigramModel {
 							if (existingThirdWordEntries.containsKey(words[thirdLoop+2])){
 								if (firstTrigram){
 								theProbability=existingThirdWordEntries.get(words[thirdLoop+2]);
-								//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
+								System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
 								foundProbability=true;
 								firstTrigram=false;
 								} else {
 									theProbability= theProbability * existingThirdWordEntries.get(words[thirdLoop+2]);
 									foundProbability=true;
-									//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
+									System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[thirdLoop+2]));
 									//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
 								}
 							}
@@ -934,13 +940,13 @@ public class SkipTrigramModel {
 								if (existingThirdWordEntries.containsKey(words[outerLoop])){
 									if (firstTrigram){
 									theProbability=existingThirdWordEntries.get(words[outerLoop]);
-									//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[outerLoop]));
+									System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[outerLoop]));
 									foundProbability=true;
 									firstTrigram=false;
 									} else {
 										theProbability= theProbability * existingThirdWordEntries.get(words[outerLoop]);
 										foundProbability=true;
-										//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[outerLoop]));
+										System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[outerLoop]));
 										//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
 									}
 								}
@@ -957,13 +963,13 @@ public class SkipTrigramModel {
 								if (existingThirdWordEntries.containsKey(words[secondLoop+1])){
 									if (firstTrigram){
 									theProbability=existingThirdWordEntries.get(words[secondLoop+1]);
-									//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[secondLoop+1]));
+									System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[secondLoop+1]));
 									foundProbability=true;
 									firstTrigram=false;
 									} else {
 										theProbability= theProbability * existingThirdWordEntries.get(words[secondLoop+1]);
 										foundProbability=true;
-										//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[secondLoop+1]));
+										System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[secondLoop+1]));
 										//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
 									}
 								}
@@ -974,13 +980,13 @@ public class SkipTrigramModel {
 									if (existingThirdWordEntries.containsKey(words[outerLoop])){
 										if (firstTrigram){
 										theProbability=existingThirdWordEntries.get(words[outerLoop]);
-										//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[outerLoop]));
+										System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability " + " " + existingThirdWordEntries.get(words[outerLoop]));
 										foundProbability=true;
 										firstTrigram=false;
 										} else {
 											theProbability= theProbability * existingThirdWordEntries.get(words[outerLoop]);
 											foundProbability=true;
-											//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[outerLoop]));
+											System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability for" + " " + existingThirdWordEntries.get(words[outerLoop]));
 											//System.out.println(words[secondLoop+1] + " " + words[outerLoop] + " probability sum" + " " + theProbability);
 										}
 									}
@@ -1001,7 +1007,7 @@ public class SkipTrigramModel {
 						
 					//Bi gram not found  
 					if (foundProbability==false){
-						//System.out.println("skipgram not found");
+						System.out.println("skipgram not found: "+ words[outerLoop] + words[secondLoop+1]+ words[thirdLoop+2]);
 						//backoff 
 		
 						//if(this.perplexityLogFile) {
@@ -1080,7 +1086,7 @@ public class SkipTrigramModel {
 	
 			//System.out.println("Total probability of sentence: " + theProbability);
 			//if (clue.equals("Start chopping wood for money")){
-			System.out.println(thePerplexity +"   " +clue);
+			//System.out.println(thePerplexity +"   " +clue);
 			//}
 			return thePerplexity;
 	}
@@ -1286,6 +1292,204 @@ public class SkipTrigramModel {
 		
 		
 	}
+	
+	public void findSuitableWord (char firstLetter, String originalClue, String givenWords, UnigramModel unigram, BigramModel bigram) {		
+		System.out.println("\n\nClue: " + originalClue+"\n");
+		TreeMap<Double, ArrayList<String>> allPerplexitiesForClues;
+		TreeMap<Double, ArrayList<String>> bestCluesFoundBySkipgram;
+		Dictionary dictionary = new Dictionary();
+		
+		//ArrayList<String> wordsStartingWithChosenLetter = unigram.getAllWordsStartingWith(firstLetter);		
+		ArrayList<String> wordsStartingWithChosenLetter = loadDictionaryWords(firstLetter);
+		System.out.println("Number of words being tested: "+wordsStartingWithChosenLetter.size());
+		
+		allPerplexitiesForClues=addPerplexitiesOfCluesToMap(wordsStartingWithChosenLetter, givenWords, unigram);
+		bestCluesFoundBySkipgram=getLowPerplexityClues(allPerplexitiesForClues);
+		
+		getBigramPerplexitiesForBestClues(givenWords, originalClue, bestCluesFoundBySkipgram, bigram, unigram);
+		//getTrigramPerplexitiesForBestClues(givenWords, originalClue, bestCluesFoundBySkipgram, trigram, unigram);
+	}
+
+	private TreeMap<Double, ArrayList<String>> addPerplexitiesOfCluesToMap(ArrayList<String> wordsStartingWithChosenLetter, String givenWords, UnigramModel unigram) {
+		TreeMap<Double, ArrayList<String>> allPerplexitiesForClues = new TreeMap<Double, ArrayList<String>>();
+		ArrayList<String> words = new ArrayList<>();
+
+		for (String word : wordsStartingWithChosenLetter) {
+			if (!tidyUpData.unwantedWords.contains(word)){
+				String completeClue = givenWords+ " " + word;	
+				double perplexity = perplexityOf(completeClue, unigram);
+				if (allPerplexitiesForClues.containsKey(perplexity)){
+					//System.out.println("perp exists");
+					words=allPerplexitiesForClues.get(perplexity);
+					words.add(word);
+					allPerplexitiesForClues.put(perplexity, words);
+				}
+				else {
+					//System.out.println("perp doesnt exist");
+					words=new ArrayList<>();
+					words.add(word);
+					allPerplexitiesForClues.put(perplexityOf(completeClue, unigram), words);
+				}
+			}
+		}
+		
+		return allPerplexitiesForClues;
+	}
+	
+	private void getBigramPerplexitiesForBestClues(String givenWords, String originalClue, TreeMap< Double, ArrayList<String>> wordsFoundBySkipgram, BigramModel bigram, UnigramModel unigram) {
+		
+		String[] shortGivenWordArray=givenWords.toLowerCase().split(" ");
+		ArrayList<String> givenWordList = new ArrayList<String> (Arrays.asList(shortGivenWordArray));
+		givenWordList.add("");
+		String[] givenWordArray = new String[shortGivenWordArray.length+1];
+		givenWordList.toArray(givenWordArray);
+		String[] originalClueArray = originalClue.toLowerCase().split(" ");
+		TreeMap <Double, ArrayList<String>> bigramPerplexities = new TreeMap<>();
+		ArrayList <String> words;
+		int count = 0 ; 
+		
+		//get the position of the missing word in the clue as it is important for traditional n-grams
+		int position=getPositionOfMissingWord(givenWordArray, originalClueArray);
+		
+		String[] newClueArray= getNewArrayWithABlankForTheMissingWord(givenWordArray, originalClueArray, position);
+		
+		
+		for (Double skipgramPerplexity: wordsFoundBySkipgram.keySet()){
+			
+			for (String word : wordsFoundBySkipgram.get(skipgramPerplexity)){
+				newClueArray[position]=word;
+			
+				String completeClue="";
+				boolean firstWord=true;
+				double bigramPerplexity;
+				
+				for (int loop=0; loop<newClueArray.length; loop++){
+					//System.out.println(newClueArray[loop]);
+					if (firstWord){
+						completeClue=newClueArray[loop];
+						firstWord=false;
+					}
+					else{
+						completeClue=completeClue+" "+newClueArray[loop];
+					}
+				}
+					
+				bigramPerplexity = bigram.perplexityOf(completeClue);
+				if (bigramPerplexities.containsKey(bigramPerplexity)){
+					//System.out.println("perp exists");
+					words=bigramPerplexities.get(bigramPerplexity);
+					words.add(word);
+					bigramPerplexities.put(bigramPerplexity, words);
+				}
+				else {
+					//System.out.println("perp doesnt exist");
+					words=new ArrayList<>();
+					words.add(word);
+					bigramPerplexities.put(bigramPerplexity, words);
+				}
+			
+			}
+		}
+		
+		System.out.println("\n\nUsing bigram to filter results: \n");
+		for(Double perplexity : bigramPerplexities.keySet()){
+			words = bigramPerplexities.get(perplexity);
+			if (count<15){
+			for (String word : words){
+				count = count + 1;
+				System.out.println(count + ". "+word+ ": "+ perplexity  );
+				}	
+			}
+			else break;
+		}
+	}
+	
+	private int getPositionOfMissingWord(String[] givenWordArray, String[] originalClueArray) {
+		int position=99;
+		//get the position of the missing word in the clue
+		for (int loop=0; loop<originalClueArray.length; loop++){
+			System.out.println(originalClueArray[loop]);
+			System.out.println(givenWordArray[loop]);
+			if (!originalClueArray[loop].equals(givenWordArray[loop])){
+				position = loop;
+				break;
+			}
+		}
+		System.out.println(position + " position");
+		return position;
+	}
+
+	private TreeMap<Double, ArrayList<String>> getLowPerplexityClues(TreeMap<Double, ArrayList<String>> allPerplexitiesForClues) {
+		TreeMap<Double, ArrayList<String>> bestCluesFoundBySkipgram= new TreeMap<>();
+		ArrayList<String> words;
+		int count=0;
+		System.out.println("\nTop 30 results for skip-trigram using dictionary: \n");
+		for (Double perplexity: allPerplexitiesForClues.keySet()){
+			words = allPerplexitiesForClues.get(perplexity);
+			if (count<30){
+				int numberOfEntries = allPerplexitiesForClues.get(perplexity).size();
+				bestCluesFoundBySkipgram.put(perplexity, allPerplexitiesForClues.get(perplexity));
+				for (String word : words){
+					count = count+1;
+					System.out.println(count+ ". "+ word + ": " + perplexity);
+				}
+				
+			}
+			else break;
+			
+		}
+		return bestCluesFoundBySkipgram;
+	}
+
+	
+	private String[] getNewArrayWithABlankForTheMissingWord(String[] givenWordArray, String[] originalClueArray, int position) {	
+		String[] newClueArray= new String[originalClueArray.length];
+		
+		for (int loop=0; loop<originalClueArray.length; loop++){		
+			if (loop!=position){		
+				newClueArray[loop]=originalClueArray[loop];
+			} else {
+				newClueArray[loop]="";
+			}
+		}
+		System.out.println(Arrays.toString(newClueArray));
+		return newClueArray;
+
+	}
+
+	private ArrayList<String> loadDictionaryWords(char letter){
+		System.out.println("letter " + letter);
+		ArrayList<String> wordsStartingWithChosenLetter;
+		Dictionary dictionary = new Dictionary();
+		switch (letter) {
+		case 'a': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadAWords().keySet());		
+			return wordsStartingWithChosenLetter;
+		case 'b': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadBWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'c': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadCWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'd': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadDWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'e': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadEWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'g': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadGWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'l': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadLWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'p': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadPWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'r': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadRWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 's': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadSWords().keySet());
+			return wordsStartingWithChosenLetter;		
+		case 't': wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadTWords().keySet());
+			return wordsStartingWithChosenLetter;
+		case 'y':  wordsStartingWithChosenLetter= new ArrayList<>(dictionary.loadYWords().keySet());
+			return wordsStartingWithChosenLetter;
+		}
+		return null;
+		
+		}
 }
 
 
